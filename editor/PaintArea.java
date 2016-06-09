@@ -1,3 +1,4 @@
+package editor;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -107,7 +108,7 @@ public class PaintArea extends AbstractTool {
 		try {
 			TextureUtility.createTexture(rootApp,
 					CommonAttributes.POLYGON_SHADER,
-					ImageData.load(Input.getInput("qBUev.jpg")));
+					ImageData.load(Input.getInput("images/gridImage.jpg")));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
