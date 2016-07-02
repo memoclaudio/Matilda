@@ -3,13 +3,17 @@ package editor;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Vector;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.lang.ProcessBuilder.Redirect;
+import java.util.ArrayList;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
@@ -19,8 +23,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -28,8 +34,20 @@ import javax.swing.table.TableColumn;
 
 public class VincoliPanel extends JPanel {
 	PaintArea p;
+	JProgressBar pbar;
 
-	public VincoliPanel(PaintArea p) {
+	int valueBar = 0;
+	int fetta;
+	JFrame frame2;
+	
+	public VincoliPanel(PaintArea p, double[][][] fibre) {
+		pbar = new JProgressBar(0, 100);
+		pbar.setValue(valueBar);
+		pbar.setVisible(false);
+		fetta = (int) (fibre.length * 0.02);
+		pbar.setBounds(150, 340, 200, 30);
+		pbar.setStringPainted(true);
+		add(pbar);
 		this.p = p;
 
 		setSize(100, 100);
@@ -156,27 +174,130 @@ public class VincoliPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				/*
-				 * qua devo scandire tutte le fibre del tck, per ognuna devo
-				 * creare la stringa corrispondente e lanciare sbed con quest
-				 * ultima e la stringa modello, successivamente salvare il tutto
-				 * su un file
-				 */
 
-				if (!p.emptyModel()) {
-					System.out.println("Model's pixels after quantize with n="
-							+ p.getNumColors());
+				new Thread(new Runnable() {
+					public void run() {
+						
+						/*
+						 * qua devo scandire tutte le fibre del tck, per ognuna
+						 * devo creare la stringa corrispondente e lanciare sbed
+						 * con quest ultima e la stringa modello,
+						 * successivamente salvare il tutto su un file
+						 */
 
-					System.out.println(Converter.convertMatrixToString(
-							p.getModelVertex(), p.getNumColors()));
-				} else
-					System.out.println("Modello da convertire vuoto");
+						if (!p.emptyModel()) {
+							String model = Converter.convertMatrixToString(
+									p.getModelVertex(), p.getNumColors());
+							pbar.setVisible(true);
+							int soglia=6;
+							ArrayList<Fibra> fibreResult = null;
+							fibreResult = new ArrayList<Fibra>();
+							sbed(fibre, model, soglia, fibreResult);
+							ResultPanel ResultPanel;
+							if(fibreResult.size()!=0){
+							//System.out.println(fibreResult.size());
+								ResultPanel=new ResultPanel(fibreResult);
+							ResultPanel.start();}
+							
+						} else
+							System.out.println("Modello da convertire vuoto");
+
+					}
+
+					
+
+				}).start();
+
 			}
 		});
 		add(generateButton);
 
 	}
+	
+	
+	public void sbed(double[][][] fibre, String model, int soglia, ArrayList<Fibra> fibreResult) {
+		 
+		FileOutputStream risultati;
+		FileOutputStream sbedTmp;
+		try {
 
+			risultati = new FileOutputStream("src/results/risultati.txt");
+			PrintStream scrivi = new PrintStream(risultati);
+			// System.out.println("fibre: " + fibre.length);
+			for (int i = 0; i < fibre.length; i++) {
+			//	System.out.println("i: " + i);
+				// scrivi.println(Converter.convertMatrixToString(fibre[i],6));
+				sbedTmp = new FileOutputStream("src/results/sbedTmp.txt");
+				PrintStream scriviSbed = new PrintStream(sbedTmp);
+				scriviSbed.println(model);
+				scriviSbed.println(Converter.convertMatrixToString(fibre[i],
+						p.getNumColors()));
+				// scriviVincoli();
+				/*
+				 * ProcessBuilder builder = new ProcessBuilder(new String[] {
+				 * "/bin/sh", "-c", "cat sbedTmp.txt | ./SBED" });
+				 * 
+				 * // se non voglio fare append tolgo Redirect.appendTo
+				 * builder.redirectOutput(Redirect.appendTo(new File(
+				 * "risultati.txt")));
+				 * builder.redirectError(Redirect.appendTo(new File(
+				 * "risultati.txt")));
+				 * 
+				 * try { Process pr = builder.start(); } catch (IOException e) {
+				 * e.printStackTrace(); }
+				 */
+
+				String[] s = { "/bin/sh", "-c", "cat src/results/sbedTmp.txt | ./src/SBED" };
+				Process p = Runtime.getRuntime().exec(s);
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						p.getInputStream()));
+				String line = in.readLine();
+				if (line != null){
+					
+					if(Integer.parseInt(line)<=soglia){
+						fibreResult.add(new Fibra(fibre[i]));
+					}
+					
+					scrivi.println(line);
+					}
+
+				if (i == fetta) {
+
+					fetta += (int) (fibre.length * 0.02);
+
+					valueBar += 2;
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							pbar.setValue(valueBar);
+							pbar.updateUI();
+						}
+					});
+
+//					System.out.println("sono entrato con i= " + i
+//							+ " e pbar Value: " + pbar.getValue());
+
+				}
+
+				if (i == fibre.length - 1) {
+					File toDelete = new File("src/results/sbedTmp.txt");
+					toDelete.delete();
+				}
+
+			}
+
+			pbar.setVisible(false);
+
+		} catch (IOException ex) {
+			System.out.println("Errore: " + ex);
+			System.exit(1);
+		}
+	}
+
+	
+		
+	
+	
+	
 	public void setUpStringColumn(JTable table, TableColumn stringColumn) {
 		// Set up the editor for the sport cells.
 		JComboBox comboBox = new JComboBox();

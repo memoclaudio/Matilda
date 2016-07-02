@@ -33,7 +33,6 @@ import de.jreality.util.Input;
 
 public class PaintArea extends AbstractTool {
 
-	static JTextField textField = new JTextField(20);
 
 	static List<double[]> points = new ArrayList<double[]>();
 	static IndexedLineSetFactory lsf = new IndexedLineSetFactory();
@@ -77,7 +76,9 @@ public class PaintArea extends AbstractTool {
 		lightNode.setLight(dl);
 		camera = new Camera();
 		cameraNode.setCamera(camera);
-
+		camera.setPerspective(false);
+		 
+	
 		MatrixBuilder.euclidean().translate(0, 0, 3).assignTo(cameraNode);
 		MatrixBuilder.euclidean().assignTo(cmp);
 
@@ -144,7 +145,7 @@ public class PaintArea extends AbstractTool {
 		double[] newPoint = Rn.add(null, foot, offset);
 
 		points.add(ToolUtility.worldToLocal(tc, newPoint));
-
+		
 		updatePoints();
 		updateGeometry();
 
@@ -187,7 +188,10 @@ public class PaintArea extends AbstractTool {
 				vertices[j][0] = tmp[0];
 				vertices[j][1] = tmp[1];
 				vertices[j][2] = tmp[2];
+				
+				
 			}
+			
 
 			lsf.setVertexCount(vertices.length);
 			lsf.setVertexCoordinates(vertices);

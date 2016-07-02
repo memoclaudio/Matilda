@@ -61,6 +61,7 @@ public class Editor {
 		// viewer.initializeTools();
 		ToolSystem toolSystem = ToolSystem.toolSystemForViewer(viewer);
 		toolSystem.initializeSceneTools();
+		
 
 		// Component cmp = ((Component) viewer.getViewingComponent());
 		// cmp.addKeyListener(new KeyAdapter() {
@@ -147,6 +148,7 @@ public class Editor {
 		while (true) {
 			viewer.render();
 			viewerAxes.render();
+			
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {

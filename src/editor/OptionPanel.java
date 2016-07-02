@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -23,7 +26,7 @@ public class OptionPanel extends JPanel {
 	private int width;
 	private int height;
 	JButton button;
-	private boolean tckLoaded=false;
+	private double[][][] fibre;
 	
 	JTextField textField;
 
@@ -104,12 +107,15 @@ public class OptionPanel extends JPanel {
 				    chooser.setFileFilter(filter);
 			int returnVal=	     chooser.showOpenDialog(null);   
 				    if(returnVal == JFileChooser.APPROVE_OPTION) {
-				    	tckLoaded=true;
-//				       System.out.println("You chose to open this file: " +
-//				            chooser.getSelectedFile().getPath());
-		//		    TracksReader.read(chooser.getSelectedFile().getPath());
-				    	}
-				    else tckLoaded=false;
+				    	/*
+				    	 *Gestire eccezioni sollevate da read
+				    	 **/
+				    	
+				    	fibre=TracksReader.read(chooser.getSelectedFile().getPath());
+				//System.out.println("Fibre size "+fibre.length);
+				    	
+				    }
+				   
 
 		}
 		});
@@ -127,13 +133,13 @@ public class OptionPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				//editor.getLineColorTransformation();
 				if(!editor.emptyModel()){
-					if(tckLoaded){					
+					if(fibre!=null){					
 					int widthVincoliPanel=500;
 				int heightVincoliPanel=500;
 						JDialog frame = new JDialog( f,ModalityType.APPLICATION_MODAL);
 						frame.setSize(widthVincoliPanel, heightVincoliPanel);
 						frame.setLocation(width/2-widthVincoliPanel/2, height/2-heightVincoliPanel/2);
-				VincoliPanel v=new VincoliPanel(editor);
+				VincoliPanel v=new VincoliPanel(editor, fibre);
 						frame.add(v);
 						frame.setVisible(true);
 					
