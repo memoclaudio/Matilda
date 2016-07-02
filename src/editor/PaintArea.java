@@ -45,7 +45,7 @@ public class PaintArea extends AbstractTool {
 	private static double[][] vertices;
 	SceneGraphComponent rootNode;
 	SceneGraphPath camPath;
-	private SceneGraphComponent cmp;
+	SceneGraphComponent cmp;
 	private SceneGraphComponent cameraNode;
 
 	public PaintArea() {

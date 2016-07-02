@@ -27,8 +27,11 @@ import de.jreality.scene.DirectionalLight;
 import de.jreality.scene.Light;
 import de.jreality.scene.SceneGraphComponent;
 import de.jreality.scene.SceneGraphPath;
+import de.jreality.scene.Transformation;
 import de.jreality.scene.Viewer;
 import de.jreality.scene.data.Attribute;
+import de.jreality.scene.event.TransformationEvent;
+import de.jreality.scene.event.TransformationListener;
 import de.jreality.scene.tool.AbstractTool;
 import de.jreality.scene.tool.InputSlot;
 import de.jreality.scene.tool.ToolContext;
@@ -78,7 +81,22 @@ public class Editor {
 		// default:
 		// }}});
 		//
+		AxisArea Axes = new AxisArea();
 
+		
+		editor.cmp.getTransformation().addTransformationListener(new TransformationListener() {
+			@Override
+			public void transformationMatrixChanged(TransformationEvent event) {
+				double[] matrixCopy = new double[16];
+				for(int i=0;i<16;i++) {
+					matrixCopy[i] = event.getTransformation().getMatrix()[i];
+					if(i%4==3&&i!=15) {
+						matrixCopy[i]=0;
+					}
+				}			
+				Axes.axes.setTransformation(new Transformation(matrixCopy));
+			}
+		});
 		// JReality Panel
 		JPanel panel = (JPanel) viewer.getViewingComponent();
 		// panel.setLayout(null);
@@ -106,7 +124,6 @@ public class Editor {
 		OptionPanel panel2 = new OptionPanel(width, height, editor, frame);
 		panel2.setLocation(0, 0);
 
-		AxisArea Axes = new AxisArea();
 		// ToolSystemViewer viewer = new ToolSystemViewer(new Viewer());
 		JOGLViewer viewerAxes = new JOGLViewer();
 		viewerAxes.setSceneRoot(Axes.rootNode);
