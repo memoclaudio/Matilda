@@ -60,7 +60,7 @@ public class Editor {
 		// ToolSystemViewer viewer = new ToolSystemViewer(new Viewer());
 		JOGLViewer viewer = new JOGLViewer();
 		viewer.setSceneRoot(editor.rootNode);
-		viewer.setCameraPath(editor.camPath);
+		viewer.setCameraPath(editor.scene.getCamPath());
 		// viewer.initializeTools();
 		ToolSystem toolSystem = ToolSystem.toolSystemForViewer(viewer);
 		toolSystem.initializeSceneTools();
@@ -127,7 +127,7 @@ public class Editor {
 		// ToolSystemViewer viewer = new ToolSystemViewer(new Viewer());
 		JOGLViewer viewerAxes = new JOGLViewer();
 		viewerAxes.setSceneRoot(Axes.rootNode);
-		viewerAxes.setCameraPath(Axes.camPath);
+		viewerAxes.setCameraPath(Axes.scene.getCamPath());
 		// viewerAxes.initializeTools();
 		ToolSystem toolSystemAxes = ToolSystem.toolSystemForViewer(viewerAxes);
 		toolSystemAxes.initializeSceneTools();

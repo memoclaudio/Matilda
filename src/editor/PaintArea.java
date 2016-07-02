@@ -33,22 +33,25 @@ import de.jreality.util.Input;
 
 public class PaintArea extends AbstractTool {
 
+	Scene scene = Scene.getInstance();
 
 	static List<double[]> points = new ArrayList<double[]>();
 	static IndexedLineSetFactory lsf = new IndexedLineSetFactory();
 	static PointSetFactory pointSet = new PointSetFactory();
-	private static Camera camera;
+	// private static Camera camera;
 	static DragEventTool dragEventTool;
 	static boolean mouseInScreen;
 	private static int dim;// num of points vertices;
 	private static int n; // number of colors for quantization
 	private static double[][] vertices;
 	SceneGraphComponent rootNode;
-	SceneGraphPath camPath;
+	// SceneGraphPath camPath;
 	SceneGraphComponent cmp;
-	private SceneGraphComponent cameraNode;
+
+	// private SceneGraphComponent cameraNode;
 
 	public PaintArea() {
+
 		dim = 100;
 		n = 6;
 		// INPUT
@@ -62,46 +65,53 @@ public class PaintArea extends AbstractTool {
 		cmp.addChild(cmplsf);
 		cmp.addChild(cmpPointSet);
 		cmp.addTool(this);
+
+		Appearance a = new Appearance();
+		a.setAttribute(CommonAttributes.DIFFUSE_COLOR, Color.BLUE);
+		cmp.setAppearance(a);
+
 		draggedPoint();
+
 		cmpPointSet.addTool(dragEventTool);
+
 		rootNode = new SceneGraphComponent();
-		cameraNode = new SceneGraphComponent();
-		SceneGraphComponent lightNode = new SceneGraphComponent();
+		// cameraNode = new SceneGraphComponent();
+		// SceneGraphComponent lightNode = new SceneGraphComponent();
 		rootNode.addChild(cmp);
-		rootNode.addChild(cameraNode);
-		cameraNode.addChild(lightNode);
-		RotateTool rotateTool = new RotateTool();
-		cmp.addTool(rotateTool);
-		Light dl = new DirectionalLight();
-		lightNode.setLight(dl);
-		camera = new Camera();
-		cameraNode.setCamera(camera);
-		camera.setPerspective(false);
-		 
-	
-		MatrixBuilder.euclidean().translate(0, 0, 3).assignTo(cameraNode);
+		// rootNode.addChild(cameraNode);
+		rootNode.addChild(scene.getCameraNode());
+		// cameraNode.addChild(lightNode);
+		// RotateTool rotateTool = new RotateTool();
+
+		cmp.addTool(scene.getRotateTool());
+		// cmp.addTool(rotateTool);
+		// Light dl = new DirectionalLight();
+		// lightNode.setLight(dl);
+		// camera = new Camera();
+		// cameraNode.setCamera(camera);
+		// camera.setPerspective(false);
+
+		// MatrixBuilder.euclidean().translate(0, 0, 3).assignTo(cameraNode);
 		MatrixBuilder.euclidean().assignTo(cmp);
 
-		Appearance rootApp = new Appearance();
-		rootApp.setAttribute(CommonAttributes.BACKGROUND_COLOR, new Color(1f,
-				1f, 1f));
-		double[] defaultPoints = { -10, -10, -5, 10, -10, -5, 10, 10, -5, -10,
-				10, -5 };
-		rootNode.setGeometry(Primitives.texturedQuadrilateral(defaultPoints));
-		try {
-			TextureUtility.createTexture(rootApp,
-					CommonAttributes.POLYGON_SHADER,
-					ImageData.load(Input.getInput("images/gridImage.jpg")));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		rootNode.setAppearance(rootApp);
-
-		camPath = new SceneGraphPath();
-		camPath.push(rootNode);
-		camPath.push(cameraNode);
-		camPath.push(camera);
+		/*
+		 * Appearance rootApp = new Appearance();
+		 * rootApp.setAttribute(CommonAttributes.BACKGROUND_COLOR, new Color(1f,
+		 * 1f, 1f)); double[] defaultPoints = { -10, -10, -5, 10, -10, -5, 10,
+		 * 10, -5, -10, 10, -5 };
+		 * rootNode.setGeometry(Primitives.texturedQuadrilateral
+		 * (defaultPoints)); try { TextureUtility.createTexture(rootApp,
+		 * CommonAttributes.POLYGON_SHADER,
+		 * ImageData.load(Input.getInput("images/gridImage.jpg"))); } catch
+		 * (IOException e) { e.printStackTrace(); }
+		 */
+		rootNode.setAppearance(scene.rootApp);
+		rootNode.setGeometry(scene.getG());
+		scene.setRootNode(rootNode);
+		// camPath = new SceneGraphPath();
+		// camPath.push(rootNode);
+		// camPath.push(cameraNode);
+		// camPath.push(camera);
 
 	}
 
@@ -145,7 +155,7 @@ public class PaintArea extends AbstractTool {
 		double[] newPoint = Rn.add(null, foot, offset);
 
 		points.add(ToolUtility.worldToLocal(tc, newPoint));
-		
+
 		updatePoints();
 		updateGeometry();
 
@@ -188,10 +198,8 @@ public class PaintArea extends AbstractTool {
 				vertices[j][0] = tmp[0];
 				vertices[j][1] = tmp[1];
 				vertices[j][2] = tmp[2];
-				
-				
+
 			}
-			
 
 			lsf.setVertexCount(vertices.length);
 			lsf.setVertexCoordinates(vertices);
