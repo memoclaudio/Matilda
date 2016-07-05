@@ -47,7 +47,7 @@ public  class AxisFactory {
 			edgeColors, 
 			crossSection = TubeUtility.octagonalCrossSection;
 		public double[] radii = null;
-		public double radius = .05;
+		public double radius = .025;
 		public FrameFieldType frameFieldType = FrameFieldType.PARALLEL;
 		public int metric = Pn.EUCLIDEAN;
 		public int twists = 0;
@@ -503,7 +503,7 @@ public  class AxisFactory {
 			return Pn.polarizePlane(null,  initialBinormal != null ?  initialBinormal : P3.planeFromPoints(null, B, polygon[1], polygon[2]),metric);
 		}
 
-		 static double[][] axes = {{0,0,0},{1,0,0},{0,1,0},{0,0,1}};
+		 static double[][] axes = {{0,0,0},{0.35,0,0},{0,0.35,0},{0,0,0.35}};
 		 static int[][] axesIndices = {{0,1},{0,2},{0,3}};
 		 static Color[] axesColors = {Color.red, Color.green, Color.blue};
 		 static String [] assi={"X","Y","Z"};
@@ -530,7 +530,7 @@ public  class AxisFactory {
 			}
 			SceneGraphComponent sgc = new SceneGraphComponent();
 			Appearance ap = new Appearance();
-			ap.setAttribute(CommonAttributes.LINE_SHADER+"."+CommonAttributes.TUBE_RADIUS, .005);
+			ap.setAttribute(CommonAttributes.LINE_SHADER+"."+CommonAttributes.TUBE_RADIUS, .001);
 			ap.setAttribute(CommonAttributes.LINE_SHADER+"."+CommonAttributes.TUBES_DRAW, false);
 			ap.setAttribute(CommonAttributes.LINE_SHADER+"."+CommonAttributes.DIFFUSE_COLOR, new Color(100, 200, 200));
 			ap.setAttribute(CommonAttributes.LINE_SHADER+"."+"polygonShader.diffuseColor", new Color(100, 200, 200));
@@ -562,7 +562,7 @@ public  class AxisFactory {
 			BallAndStickFactory basf = new BallAndStickFactory(ils);
 			basf.setShowArrows(true);
 			basf.setArrowPosition(1.0);
-			basf.setStickRadius(.01);
+			basf.setStickRadius(.005);
 			basf.setArrowScale(.05);
 			basf.setArrowSlope(2.0);
 			basf.setShowBalls(false);
