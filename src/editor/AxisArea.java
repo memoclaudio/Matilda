@@ -1,5 +1,6 @@
 package editor;
 
+import de.jreality.math.MatrixBuilder;
 import de.jreality.scene.SceneGraphComponent;
 import de.jreality.scene.tool.AbstractTool;
 
@@ -16,6 +17,7 @@ public class AxisArea {
 	public AxisArea() {
 
 		axes = AxisFactory.getXYZAxes();
+		
 		axes.addTool(scene.getRotateTool());
 		rootNode = new SceneGraphComponent();
 		rootNode.addChild(axes);

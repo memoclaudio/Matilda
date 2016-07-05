@@ -42,10 +42,13 @@ public class Editor {
 				for(int i=0;i<16;i++) {
 					matrixCopy[i] = event.getTransformation().getMatrix()[i];
 					if(i%4==3&&i!=15) {
-						matrixCopy[i]=0;
+						matrixCopy[i]=2;
+					}
+					if(i%4==7) {
+						matrixCopy[i]=-2;
 					}
 				}			
-				Axes.axes.setTransformation(new Transformation(matrixCopy));
+				editor.axes.setTransformation(new Transformation(matrixCopy));
 			}
 		});
 		// JReality Panel
@@ -87,9 +90,9 @@ public class Editor {
 
 		
 		
-		frame.add(panelAssi);
+	//	frame.add(panelAssi);	
 		frame.add(panel);
-
+	
 		frame.add(panel2);
 
 		frame.setVisible(true);

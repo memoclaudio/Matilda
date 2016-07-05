@@ -41,6 +41,7 @@ public class PaintArea extends AbstractTool {
 	String constraints="";
 
 	// private SceneGraphComponent cameraNode;
+	SceneGraphComponent axes = new SceneGraphComponent();
 
 	public PaintArea() {
 
@@ -49,6 +50,10 @@ public class PaintArea extends AbstractTool {
 		// INPUT
 		addCurrentSlot(InputSlot.SHIFT_LEFT_BUTTON, "add a new point");
 		dragEventTool = new DragEventTool();
+		
+	
+		
+			
 		cmp = new SceneGraphComponent();
 		SceneGraphComponent cmplsf = new SceneGraphComponent();
 		SceneGraphComponent cmpPointSet = new SceneGraphComponent();
@@ -60,12 +65,13 @@ public class PaintArea extends AbstractTool {
 
 		Appearance a = new Appearance();
 		a.setAttribute(CommonAttributes.DIFFUSE_COLOR, new Color(220,20,60));
+		a.setAttribute("transparencyEnabled", false);
+
 		cmp.setAppearance(a);
 
 		draggedPoint();
 
 		cmpPointSet.addTool(dragEventTool);
-
 		rootNode = new SceneGraphComponent();
 		rootNode.addChild(cmp);
 		rootNode.addChild(scene.getCameraNode());
@@ -77,6 +83,13 @@ public class PaintArea extends AbstractTool {
 		scene.setRootNode(rootNode);
 		DefaultMatrixSupport.getSharedInstance().storeDefaultMatrices(rootNode);
 
+axes = AxisFactory.getXYZAxes();
+MatrixBuilder.euclidean().translate(2,-2,0).assignTo(axes);		
+		axes.addTool(scene.getRotateTool());
+		rootNode.addChild(axes);
+		rootNode.addChild(scene.getCameraNode());
+		rootNode.setAppearance(scene.rootApp);
+		
 	}
 
 	public static void draggedPoint() {

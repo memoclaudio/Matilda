@@ -78,7 +78,6 @@ boolean  stop=false;
 		nColorsIcon=ImageIO.read(new File("src/images/pencil.png"));
 				startIcon=ImageIO.read(new File("src/images/start-cog.png"));
 				vincoliIcon=ImageIO.read(new File("src/images/vincoli.png"));
-				rectangle=ImageIO.read(new File("src/images/rectangle.png"));
 				
 	} catch (IOException e1) {
 		// TODO Auto-generated catch block

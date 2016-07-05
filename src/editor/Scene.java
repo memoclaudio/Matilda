@@ -58,10 +58,10 @@ public class Scene {
 
 		
 		
-		rootApp.setAttribute(CommonAttributes.BACKGROUND_COLOR,new Color(32,32,32));
+		rootApp.setAttribute(CommonAttributes.BACKGROUND_COLOR,new Color(40,40,40));
 		rootApp.setAttribute(CommonAttributes.DIFFUSE_COLOR,Color.white);
-//		rootApp.setAttribute("transparencyEnabled", true);
-//	      rootApp.setAttribute("transparency", 0.9);
+		rootApp.setAttribute("transparencyEnabled", true);
+	      rootApp.setAttribute("transparency", 0.7);
 //		
 		MatrixBuilder.euclidean().translate(0, 0, 3).assignTo(cameraNode);
 
@@ -70,7 +70,7 @@ public class Scene {
 		g = (Primitives.texturedQuadrilateral(defaultPoints));
 
 		try {
-			TextureUtility.createTexture(rootApp,CommonAttributes.POLYGON_SHADER,ImageData.load(Input.getInput("images/gridImage2.jpg")));
+			TextureUtility.createTexture(rootApp,CommonAttributes.POLYGON_SHADER,ImageData.load(Input.getInput("images/redGrid.png")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
