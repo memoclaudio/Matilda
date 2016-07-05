@@ -16,5 +16,14 @@ public class Fibra {
 		return vertices;
 	}
 	
+	public void setPoint(int i,double x, double y,double z){
+		vertices[i][0] = x;
+		vertices[i][1] = y;
+		vertices[i][2] = z;
+	}
+	
+	public int size(){
+		return vertices.length;
+	}
 
 }

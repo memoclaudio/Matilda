@@ -1,101 +1,136 @@
 package editor;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.lang.ProcessBuilder.Redirect;
-import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.DefaultCellEditor;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-public class VincoliPanel extends JPanel {
-	PaintArea p;
-	JProgressBar pbar;
-
-	int valueBar = 0;
-	int fetta;
-	JFrame frame2;
+public class VincoliPanel  {
+	JDialog frame;
 	
-	public VincoliPanel(PaintArea p, double[][][] fibre) {
-		pbar = new JProgressBar(0, 100);
-		pbar.setValue(valueBar);
-		pbar.setVisible(false);
-		fetta = (int) (fibre.length * 0.02);
-		pbar.setBounds(150, 340, 200, 30);
-		pbar.setStringPainted(true);
-		add(pbar);
-		this.p = p;
-
-		setSize(100, 100);
-		setLayout(null);
+	int nSymbols;
+	private Image piuIcon=null;
+	private Image menoIcon=null;
+	private Image loadFileIcon=null;
+	private Image okIcon=null;
+String constraints;
+	public VincoliPanel(int num, double[][][] fibre, int width, int height, JFrame f, PaintArea p) {
+		int widthVincoliPanel=500;
+		int heightVincoliPanel=500;
+		nSymbols=num;
+		try {
+			piuIcon=ImageIO.read(new File("src/images/piu.png"));
+			menoIcon=ImageIO.read(new File("src/images/meno.png"));
+			loadFileIcon=ImageIO.read(new File("src/images/loadFile.png"));
+			okIcon=ImageIO.read(new File("src/images/ok.png"));
+		
+					
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		frame=new JDialog( f,ModalityType.APPLICATION_MODAL);
+		frame.setPreferredSize(new Dimension(widthVincoliPanel, heightVincoliPanel));
+		frame.validate();
+		frame.setLocation(width/2-widthVincoliPanel/2, height/2-heightVincoliPanel/2);
+		frame.setLayout(null);
+frame.getContentPane().setBackground(new Color(32,32,32));
 
 		DefaultTableModel t = new DefaultTableModel();
-		MyTable TabellaPrenotati = new MyTable();
-		TabellaPrenotati(TabellaPrenotati, t);
+		MyTable tabella = new MyTable();
+		tabella(tabella, t);
+	
 
-		JLabel lblVincoli = new JLabel("VINCOLI DI SIMILARITA'");
-		lblVincoli.setForeground(Color.BLACK);
+		JLabel lblVincoli = new JLabel("Constraints");
+		lblVincoli.setForeground(new Color(220,20,60));
 		lblVincoli.setFont(new Font("Kokonor", Font.PLAIN, 30));
-		lblVincoli.setBounds(80, 10, 472, 80);
-		add(lblVincoli);
+		lblVincoli.setBounds(160, 10, 472, 80);
+		frame.getContentPane().add(lblVincoli);
 
-		JButton addRowButton = new JButton("+");
+		Image newimg =piuIcon.getScaledInstance(30,30,
+				java.awt.Image.SCALE_SMOOTH);
+			//scaled icon
+			ImageIcon newIcon = new ImageIcon(newimg);
+		JButton addRowButton = new JButton();
+		addRowButton.setIcon(newIcon);
+		addRowButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		addRowButton.setBorder(null);
+		addRowButton.setContentAreaFilled(false);
 		addRowButton.setLocation(30, 100);
-		addRowButton.setSize(new Dimension(50, 50));
+		addRowButton.setSize(new Dimension(30, 30));
 		addRowButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				addRow(t, TabellaPrenotati);
+				addRow(t, tabella);
 
 			}
 		});
 
 		addRowButton.setToolTipText("Add constraint");
-		add(addRowButton);
+		frame.getContentPane().add(addRowButton);
 
-		JButton removeRowButton = new JButton("-");
+		newimg =menoIcon.getScaledInstance(30,30,
+				java.awt.Image.SCALE_SMOOTH);
+			//scaled icon
+			 newIcon = new ImageIcon(newimg);
+		JButton removeRowButton = new JButton();
 		removeRowButton.setLocation(30, 160);
-		removeRowButton.setSize(new Dimension(50, 50));
+		removeRowButton.setIcon(newIcon);
+		removeRowButton.setBorder(null);
+		removeRowButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		removeRowButton.setContentAreaFilled(false);
+		removeRowButton.setSize(new Dimension(30, 30));
 		removeRowButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				removeSelectedRow(TabellaPrenotati, t);
+				removeSelectedRow(tabella, t);
 
 			}
 		});
 
 		removeRowButton.setToolTipText("Remove constraint");
-		add(removeRowButton);
+		frame.getContentPane().add(removeRowButton);
 
-		JButton loadButton = new JButton("Load");
-		loadButton.setLocation(100, 400);
-		loadButton.setSize(new Dimension(100, 50));
+		
+		newimg =loadFileIcon.getScaledInstance(30,30,
+				java.awt.Image.SCALE_SMOOTH);
+			//scaled icon
+			 newIcon = new ImageIcon(newimg);
+		JButton loadButton = new JButton();
+		loadButton.setLocation(30, 220);
+		loadButton.setIcon(newIcon);
+		loadButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		loadButton.setBorder(null);
+		loadButton.setContentAreaFilled(false);
+		loadButton.setSize(new Dimension(30, 30));
 		loadButton.setToolTipText("Load constraint file");
 		loadButton.addActionListener(new ActionListener() {
 
@@ -108,9 +143,6 @@ public class VincoliPanel extends JPanel {
 				chooser.setFileFilter(filter);
 				int returnVal = chooser.showOpenDialog(null);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					// System.out.println("You chose to open this file: " +
-					// chooser.getSelectedFile().getPath());
-
 					BufferedReader in = null;
 					try {
 						in = new BufferedReader(new FileReader(chooser
@@ -128,7 +160,7 @@ public class VincoliPanel extends JPanel {
 										&& Integer.parseInt(splited[0]) < 10
 										&& Integer.parseInt(splited[1]) >= 0
 										&& Integer.parseInt(splited[1]) < 10)
-									addRowFromFile(TabellaPrenotati, t, splited);
+									addRowFromFile(tabella, t, splited);
 								else {
 									JOptionPane
 											.showMessageDialog(null,
@@ -164,153 +196,64 @@ public class VincoliPanel extends JPanel {
 				}
 			}
 		});
-		add(loadButton);
-
-		JButton generateButton = new JButton("Generate");
-		generateButton.setLocation(250, 400);
-		generateButton.setSize(new Dimension(150, 50));
-		generateButton.setToolTipText("Get result");
-		generateButton.addActionListener(new ActionListener() {
+		frame.getContentPane().add(loadButton);
+		
+		
+		newimg =okIcon.getScaledInstance(30,30,
+				java.awt.Image.SCALE_SMOOTH);
+			//scaled icon
+			 newIcon = new ImageIcon(newimg);
+		JButton okButton = new JButton();
+		okButton.setLocation(400, 400);
+		okButton.setIcon(newIcon);
+		okButton.setBorder(null);
+		okButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		okButton.setContentAreaFilled(false);
+		okButton.setSize(new Dimension(30, 30));
+		okButton.setToolTipText("update constraints");
+		okButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				new Thread(new Runnable() {
-					public void run() {
-						
-						/*
-						 * qua devo scandire tutte le fibre del tck, per ognuna
-						 * devo creare la stringa corrispondente e lanciare sbed
-						 * con quest ultima e la stringa modello,
-						 * successivamente salvare il tutto su un file
-						 */
-
-						if (!p.emptyModel()) {
-							String model = Converter.convertMatrixToString(
-									p.getModelVertex(), p.getNumColors());
-							pbar.setVisible(true);
-							int soglia=6;
-							ArrayList<Fibra> fibreResult = null;
-							fibreResult = new ArrayList<Fibra>();
-							sbed(fibre, model, soglia, fibreResult);
-							ResultPanel ResultPanel;
-							if(fibreResult.size()!=0){
-							//System.out.println(fibreResult.size());
-								ResultPanel=new ResultPanel(fibreResult);
-							ResultPanel.start();}
+				
+				if(t.getRowCount()>=1 && (t.getValueAt(t.getRowCount()-1,0).equals("")^ t.getValueAt(t.getRowCount()-1,1).equals("")))
+				{
+					JOptionPane.showMessageDialog(null, "Completare i campi vuoti");
+				return;
+				}
+                
+										constraints="";
+							for(int i=0;i<tabella.getRowCount();i++)
+									if(tabella.getValueAt(i,0)!=null && !tabella.getValueAt(i,0).equals(" ") && tabella.getValueAt(i,1)!=null && !tabella.getValueAt(i,1).equals(" ") )
+									{
+										constraints+=tabella.getValueAt(i,0)+" "+tabella.getValueAt(i,1)+"\n";
+									}
+									
+						p.constraints=constraints;
 							
-						} else
-							System.out.println("Modello da convertire vuoto");
-
-					}
-
-					
-
-				}).start();
-
-			}
+						frame.setVisible(false);
+							}
 		});
-		add(generateButton);
-
-	}
-	
-	
-	public void sbed(double[][][] fibre, String model, int soglia, ArrayList<Fibra> fibreResult) {
-		 
-		FileOutputStream risultati;
-		FileOutputStream sbedTmp;
-		try {
-
-			risultati = new FileOutputStream("src/results/risultati.txt");
-			PrintStream scrivi = new PrintStream(risultati);
-			// System.out.println("fibre: " + fibre.length);
-			for (int i = 0; i < fibre.length; i++) {
-			//	System.out.println("i: " + i);
-				// scrivi.println(Converter.convertMatrixToString(fibre[i],6));
-				sbedTmp = new FileOutputStream("src/results/sbedTmp.txt");
-				PrintStream scriviSbed = new PrintStream(sbedTmp);
-				scriviSbed.println(model);
-				scriviSbed.println(Converter.convertMatrixToString(fibre[i],
-						p.getNumColors()));
-				// scriviVincoli();
-				/*
-				 * ProcessBuilder builder = new ProcessBuilder(new String[] {
-				 * "/bin/sh", "-c", "cat sbedTmp.txt | ./SBED" });
-				 * 
-				 * // se non voglio fare append tolgo Redirect.appendTo
-				 * builder.redirectOutput(Redirect.appendTo(new File(
-				 * "risultati.txt")));
-				 * builder.redirectError(Redirect.appendTo(new File(
-				 * "risultati.txt")));
-				 * 
-				 * try { Process pr = builder.start(); } catch (IOException e) {
-				 * e.printStackTrace(); }
-				 */
-
-				String[] s = { "/bin/sh", "-c", "cat src/results/sbedTmp.txt | ./src/SBED" };
-				Process p = Runtime.getRuntime().exec(s);
-				BufferedReader in = new BufferedReader(new InputStreamReader(
-						p.getInputStream()));
-				String line = in.readLine();
-				if (line != null){
-					
-					if(Integer.parseInt(line)<=soglia){
-						fibreResult.add(new Fibra(fibre[i]));
-					}
-					
-					scrivi.println(line);
-					}
-
-				if (i == fetta) {
-
-					fetta += (int) (fibre.length * 0.02);
-
-					valueBar += 2;
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							pbar.setValue(valueBar);
-							pbar.updateUI();
-						}
-					});
-
-//					System.out.println("sono entrato con i= " + i
-//							+ " e pbar Value: " + pbar.getValue());
-
-				}
-
-				if (i == fibre.length - 1) {
-					File toDelete = new File("src/results/sbedTmp.txt");
-					toDelete.delete();
-				}
-
-			}
-
-			pbar.setVisible(false);
-
-		} catch (IOException ex) {
-			System.out.println("Errore: " + ex);
-			System.exit(1);
-		}
-	}
-
-	
+		frame.getContentPane().add(okButton);
+		frame.pack();
 		
+		frame.setVisible(true);
+	}
+	
+	
+	
+	
 	
 	
 	
 	public void setUpStringColumn(JTable table, TableColumn stringColumn) {
 		// Set up the editor for the sport cells.
-		JComboBox comboBox = new JComboBox();
-		comboBox.addItem("0");
-		comboBox.addItem("1");
-		comboBox.addItem("2");
-		comboBox.addItem("3");
-		comboBox.addItem("4");
-		comboBox.addItem("5");
-		comboBox.addItem("6");
-		comboBox.addItem("7");
-		comboBox.addItem("8");
-		comboBox.addItem("9");
+
+		JComboBox<Integer> comboBox = new JComboBox<Integer>();
+		for(int i=0;i<nSymbols;i++){
+			comboBox.addItem(i);
+		}
+	
 		stringColumn.setCellEditor(new DefaultCellEditor(comboBox));
 
 		// Set up tool tips for the sport cells.
@@ -318,22 +261,32 @@ public class VincoliPanel extends JPanel {
 		renderer.setToolTipText("Click for combo box");
 		stringColumn.setCellRenderer(renderer);
 	}
+	
+	
 
-	public void TabellaPrenotati(MyTable TabellaPrenotati, DefaultTableModel t) {
-		t.addColumn("First String");
-		t.addColumn("Second String");
+	public void tabella(MyTable tabella, DefaultTableModel t) {
+		t.addColumn("First Symbol");
+		t.addColumn("Second Symbol");
 
-		TabellaPrenotati.setModel(t);
-		setLayout(null);
+		tabella.setModel(t);
+		frame.getContentPane().setLayout(null);
 
-		JScrollPane ScrollCatalogo = new JScrollPane(TabellaPrenotati);
+		JScrollPane ScrollCatalogo = new JScrollPane(tabella);
+		tabella.getTableHeader().setBackground(new Color(32,32,32));
+		tabella.getTableHeader().setForeground(new Color(220,20,60));
+		ScrollCatalogo.getViewport().setBackground(new Color(32,32,32));
 		ScrollCatalogo.setBounds(100, 100, 300, 200);
-		add(ScrollCatalogo);
+		frame.getContentPane().add(ScrollCatalogo);
 
 	}
 
 	public void addRow(DefaultTableModel t1, JTable t) {
-		String[] emptyRow = { "" };
+		if(t.getRowCount()>=1 && (t.getValueAt(t.getRowCount()-1,0).equals("")|| t.getValueAt(t.getRowCount()-1,1).equals("")))
+		{
+			JOptionPane.showMessageDialog(null, "Completare i campi vuoti per aggiungere un'altra riga");
+		return;
+		}
+			String[] emptyRow = { "","" };
 		setUpStringColumn(t, t.getColumnModel().getColumn(0));
 		setUpStringColumn(t, t.getColumnModel().getColumn(1));
 		t1.addRow(emptyRow);
@@ -350,8 +303,13 @@ public class VincoliPanel extends JPanel {
 
 	public void removeSelectedRow(JTable table, DefaultTableModel t) {
 
-		if (table.getSelectedRow() != -1)
-			t.removeRow(table.getSelectedRow());
+		if (table.getSelectedRow() != -1){
+			
+			if (table.isEditing()) {
+			    table.getCellEditor().stopCellEditing();
+			    t.removeRow(table.getSelectedRow());
+			}	
+		}
 		else
 			JOptionPane.showMessageDialog(null, "Seleziona un vincolo");
 	}

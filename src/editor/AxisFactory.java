@@ -30,9 +30,7 @@ import de.jreality.scene.data.StorageModel;
 import de.jreality.shader.Color;
 import de.jreality.shader.CommonAttributes;
 import de.jreality.shader.DefaultGeometryShader;
-import de.jreality.shader.DefaultLineShader;
 import de.jreality.shader.DefaultPointShader;
-import de.jreality.shader.DefaultPolygonShader;
 import de.jreality.shader.DefaultTextShader;
 import de.jreality.shader.ShaderUtility;
 import de.jreality.util.LoggingSystem;
@@ -389,7 +387,6 @@ public  class AxisFactory {
 				if (collinear || size < 10E-16)	{
 					// the three points must be collinear
 					if ((debug & 2) != 0) LoggingSystem.getLogger(this).log(Level.FINER,"degenerate Tangent vector");
-					// TODO figure out why much breaks 
 					// if the two vertices in the following call are swapped
 					double[] pseudoT = P3.lineIntersectPlane(null, polygonh[i-1], polygonh[i+1], polarPlane);	
 					if ((debug & 2) != 0) LoggingSystem.getLogger(this).log(Level.FINE,"pseudo-Tangent vector is "+Rn.toString(pseudoT));
@@ -398,7 +395,6 @@ public  class AxisFactory {
 					if (metric != Pn.EUCLIDEAN)	{
 						midPlane = Pn.polarizePoint(null, pseudoT, metric);
 					} else {
-						// TODO figure out why the vector (the output of lineIntersectPlane)
 						// has to be flipped in this case but not in the non-euclidean case
 						midPlane = Rn.times(null, -1.0, pseudoT);
 //						midPlane = pseudoT;
@@ -407,7 +403,6 @@ public  class AxisFactory {
 						// we assume the polygonal data is dehomogenized (last coord = 1)
 						midPlane[3] = -Rn.innerProduct(midPlane, polygonh[i], 3);						
 					}	
-					// TODO detect case where the angle is 0, also
 					theta = Math.PI;
 				}
 				//System.err.println("calc'ed midplane is "+Rn.toString(midPlane));
@@ -560,7 +555,7 @@ public  class AxisFactory {
 			
 			IndexedLineSet ils = ilsf.getIndexedLineSet();
 			String labels[] = {"","x","y","z"};
-			int n=ils.getNumEdges();
+			//int n=ils.getNumEdges();
 			ils.setVertexAttributes(Attribute.LABELS, StorageModel.STRING_ARRAY.createReadOnly(labels));
 
 			

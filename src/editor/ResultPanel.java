@@ -1,15 +1,15 @@
 package editor;
-
-
-import java.io.IOException;
+import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import de.jreality.geometry.IndexedLineSetFactory;
-import de.jreality.geometry.Primitives;
 import de.jreality.jogl.JOGLViewer;
+import de.jreality.math.MatrixBuilder;
 import de.jreality.scene.Appearance;
 import de.jreality.scene.Camera;
 import de.jreality.scene.DirectionalLight;
@@ -19,11 +19,8 @@ import de.jreality.scene.SceneGraphPath;
 import de.jreality.scene.data.Attribute;
 import de.jreality.shader.Color;
 import de.jreality.shader.CommonAttributes;
-import de.jreality.shader.ImageData;
-import de.jreality.shader.TextureUtility;
 import de.jreality.tools.RotateTool;
 import de.jreality.toolsystem.ToolSystem;
-import de.jreality.util.Input;
 
 public class ResultPanel extends Thread{
 
@@ -33,15 +30,18 @@ public class ResultPanel extends Thread{
 	SceneGraphPath camPath;
 	private SceneGraphComponent cmp;
 	private SceneGraphComponent cameraNode;
-private ArrayList<Fibra> fibre;
+private  boolean stopRequested = false;
+
 
 
 	public ResultPanel(ArrayList<Fibra> fibre) {
-		this.fibre=fibre;
 		
-	
+		
 		// INPUT
 		cmp = new SceneGraphComponent();
+		Appearance a = new Appearance();
+		a.setAttribute(CommonAttributes.DIFFUSE_COLOR, new Color(220,20,60));
+		cmp.setAppearance(a);
 		
 		for(int k=0; k<fibre.size();k++){
 			
@@ -87,6 +87,10 @@ private ArrayList<Fibra> fibre;
 		Light dl = new DirectionalLight();
 		lightNode.setLight(dl);
 		camera = new Camera();
+		MatrixBuilder.euclidean().translate(0,0,15).assignTo(cameraNode);
+		Appearance rootApp = new Appearance();
+		rootApp.setAttribute(CommonAttributes.BACKGROUND_COLOR,Color.WHITE);
+		rootNode.setAppearance(rootApp);
 		
 		cameraNode.setCamera(camera);
 		//camera.setPerspective(false);
@@ -101,17 +105,20 @@ private ArrayList<Fibra> fibre;
 
 		
 		
-		//manca while true render
 		
 	}
 	
 	public void run(){
-		int width=600;
-		int height=600;
+		int width = Toolkit.getDefaultToolkit().getScreenSize().width;
+		int height = Toolkit.getDefaultToolkit().getScreenSize().height;
+		int widthFrame=600;
+		int heightFrame=600;
 		JFrame frame=new JFrame();
 		
-		frame.	setSize(width, height);
-			frame.validate();
+		frame.	setSize(widthFrame, heightFrame);
+		frame.setLocation(width/2-widthFrame/2, height/2-heightFrame/2);
+		
+		frame.validate();
 		
 		JOGLViewer	viewer = new JOGLViewer();
 		viewer.setSceneRoot(rootNode);
@@ -124,10 +131,16 @@ private ArrayList<Fibra> fibre;
 		panel.setSize((int) (0.8 * width), height);
 		panel.setLocation(width - (int) (0.8 * width), 0);
 	frame.add(panel);
+	frame.addWindowListener(new WindowAdapter() {
+		  public void windowClosing(WindowEvent e) {
+			  stopRequested=true;
+			   
+			  }
+			});
 
 frame.	setVisible(true);
 
-	while (true) {
+	while (!stopRequested) {
 		viewer.render();
 			
 			try {

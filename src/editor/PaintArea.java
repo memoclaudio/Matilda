@@ -1,35 +1,26 @@
 package editor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JTextField;
+
 import de.jreality.geometry.IndexedLineSetFactory;
 import de.jreality.geometry.PointSetFactory;
-import de.jreality.geometry.Primitives;
 import de.jreality.math.Matrix;
 import de.jreality.math.MatrixBuilder;
 import de.jreality.math.Rn;
 import de.jreality.scene.Appearance;
-import de.jreality.scene.Camera;
-import de.jreality.scene.DirectionalLight;
-import de.jreality.scene.Light;
 import de.jreality.scene.SceneGraphComponent;
-import de.jreality.scene.SceneGraphPath;
 import de.jreality.scene.data.Attribute;
 import de.jreality.scene.tool.AbstractTool;
 import de.jreality.scene.tool.InputSlot;
 import de.jreality.scene.tool.ToolContext;
 import de.jreality.shader.Color;
 import de.jreality.shader.CommonAttributes;
-import de.jreality.shader.ImageData;
-import de.jreality.shader.TextureUtility;
 import de.jreality.tools.DragEventTool;
 import de.jreality.tools.PointDragEvent;
 import de.jreality.tools.PointDragListener;
-import de.jreality.tools.RotateTool;
 import de.jreality.toolsystem.ToolUtility;
-import de.jreality.util.Input;
+import de.jreality.util.DefaultMatrixSupport;
 
 public class PaintArea extends AbstractTool {
 
@@ -41,18 +32,19 @@ public class PaintArea extends AbstractTool {
 	// private static Camera camera;
 	static DragEventTool dragEventTool;
 	static boolean mouseInScreen;
-	private static int dim;// num of points vertices;
+	private static int dim;// num of points model;
 	private static int n; // number of colors for quantization
-	private static double[][] vertices;
+	private static Fibra model;
 	SceneGraphComponent rootNode;
 	// SceneGraphPath camPath;
 	SceneGraphComponent cmp;
+	String constraints="";
 
 	// private SceneGraphComponent cameraNode;
 
 	public PaintArea() {
 
-		dim = 100;
+		dim = 30;
 		n = 6;
 		// INPUT
 		addCurrentSlot(InputSlot.SHIFT_LEFT_BUTTON, "add a new point");
@@ -67,7 +59,7 @@ public class PaintArea extends AbstractTool {
 		cmp.addTool(this);
 
 		Appearance a = new Appearance();
-		a.setAttribute(CommonAttributes.DIFFUSE_COLOR, Color.BLUE);
+		a.setAttribute(CommonAttributes.DIFFUSE_COLOR, new Color(220,20,60));
 		cmp.setAppearance(a);
 
 		draggedPoint();
@@ -75,43 +67,15 @@ public class PaintArea extends AbstractTool {
 		cmpPointSet.addTool(dragEventTool);
 
 		rootNode = new SceneGraphComponent();
-		// cameraNode = new SceneGraphComponent();
-		// SceneGraphComponent lightNode = new SceneGraphComponent();
 		rootNode.addChild(cmp);
-		// rootNode.addChild(cameraNode);
 		rootNode.addChild(scene.getCameraNode());
-		// cameraNode.addChild(lightNode);
-		// RotateTool rotateTool = new RotateTool();
 
 		cmp.addTool(scene.getRotateTool());
-		// cmp.addTool(rotateTool);
-		// Light dl = new DirectionalLight();
-		// lightNode.setLight(dl);
-		// camera = new Camera();
-		// cameraNode.setCamera(camera);
-		// camera.setPerspective(false);
-
-		// MatrixBuilder.euclidean().translate(0, 0, 3).assignTo(cameraNode);
 		MatrixBuilder.euclidean().assignTo(cmp);
-
-		/*
-		 * Appearance rootApp = new Appearance();
-		 * rootApp.setAttribute(CommonAttributes.BACKGROUND_COLOR, new Color(1f,
-		 * 1f, 1f)); double[] defaultPoints = { -10, -10, -5, 10, -10, -5, 10,
-		 * 10, -5, -10, 10, -5 };
-		 * rootNode.setGeometry(Primitives.texturedQuadrilateral
-		 * (defaultPoints)); try { TextureUtility.createTexture(rootApp,
-		 * CommonAttributes.POLYGON_SHADER,
-		 * ImageData.load(Input.getInput("images/gridImage.jpg"))); } catch
-		 * (IOException e) { e.printStackTrace(); }
-		 */
 		rootNode.setAppearance(scene.rootApp);
 		rootNode.setGeometry(scene.getG());
 		scene.setRootNode(rootNode);
-		// camPath = new SceneGraphPath();
-		// camPath.push(rootNode);
-		// camPath.push(cameraNode);
-		// camPath.push(camera);
+		DefaultMatrixSupport.getSharedInstance().storeDefaultMatrices(rootNode);
 
 	}
 
@@ -155,7 +119,6 @@ public class PaintArea extends AbstractTool {
 		double[] newPoint = Rn.add(null, foot, offset);
 
 		points.add(ToolUtility.worldToLocal(tc, newPoint));
-
 		updatePoints();
 		updateGeometry();
 
@@ -168,7 +131,7 @@ public class PaintArea extends AbstractTool {
 			pointSet.setVertexCoordinates(points.toArray(new double[0][]));
 			Color clr[] = new Color[points.size()];
 			for (int i = 0; i < clr.length; i++) {
-				clr[i] = Color.RED;
+				clr[i] = Color.BLUE;
 			}
 			pointSet.setVertexColors(clr);
 			pointSet.update();
@@ -181,28 +144,31 @@ public class PaintArea extends AbstractTool {
 
 	public void removePoint() {
 		points.remove(points.size() - 1);
+
 	}
 
 	public static void updateGeometry() {
 
 		int n = points.size();
+		if (n == 1) {
+			lsf.setVertexCount(0);
+			lsf.update();
+			lsf.setEdgeCount(0);
 
+		}
 		if (n >= 2) {
 
-			vertices = new double[dim][3];
+			model = new Fibra(dim);
 			int j = 0;
 			double[] tmp;
 			for (double t = 0; j < dim; t += 1.0 / (dim - 1), j++) {
 
 				tmp = getCasteljauPoint(points.size() - 1, 0, t);
-				vertices[j][0] = tmp[0];
-				vertices[j][1] = tmp[1];
-				vertices[j][2] = tmp[2];
-
+				model.setPoint(j, tmp[0], tmp[1], tmp[2]);
 			}
 
-			lsf.setVertexCount(vertices.length);
-			lsf.setVertexCoordinates(vertices);
+			lsf.setVertexCount(model.size());
+			lsf.setVertexCoordinates(model.getVertex());
 
 			double size[] = new double[dim];
 			for (int i = 0; i < dim; i++) {
@@ -247,7 +213,7 @@ public class PaintArea extends AbstractTool {
 	}
 
 	public double[][] getModelVertex() {
-		return vertices;
+		return model.getVertex();
 	}
 
 	// algoritmo di Casteljau
@@ -268,6 +234,11 @@ public class PaintArea extends AbstractTool {
 		pointSet.update();
 		lsf.update();
 
+	}
+
+	public void resetTransformation() {
+		DefaultMatrixSupport.getSharedInstance().restoreDefaultMatrices(
+				rootNode, false);
 	}
 
 	public void setMouseInScreen(boolean v) {

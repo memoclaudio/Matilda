@@ -24,10 +24,11 @@ public class Scene {
 	Appearance rootApp = new Appearance();
 	private static Camera camera = new Camera();
 	private SceneGraphPath camPath = new SceneGraphPath();
-	private static SceneGraphComponent cameraNode = new SceneGraphComponent();
+	static SceneGraphComponent cameraNode = new SceneGraphComponent();
 	private SceneGraphComponent lightNode = new SceneGraphComponent();
 	private RotateTool rotateTool = new RotateTool();
 	private SceneGraphComponent rootNode = new SceneGraphComponent();
+ 
 
 	private Geometry g;
 
@@ -45,7 +46,7 @@ public class Scene {
 		return instance;
 	}
 
-	public Scene() {
+	private Scene() {
 		// toolSystemAxes.initializeSceneTools();
 		cameraNode.setCamera(camera);
 		camPath.push(rootNode);
@@ -57,10 +58,11 @@ public class Scene {
 
 		
 		
-		rootApp.setAttribute(CommonAttributes.BACKGROUND_COLOR,Color.WHITE);
-		rootApp.setAttribute(CommonAttributes.DIFFUSE_COLOR,Color.CYAN);
-		
-		
+		rootApp.setAttribute(CommonAttributes.BACKGROUND_COLOR,new Color(32,32,32));
+		rootApp.setAttribute(CommonAttributes.DIFFUSE_COLOR,Color.white);
+//		rootApp.setAttribute("transparencyEnabled", true);
+//	      rootApp.setAttribute("transparency", 0.9);
+//		
 		MatrixBuilder.euclidean().translate(0, 0, 3).assignTo(cameraNode);
 
 		double[] defaultPoints = { -4, -4, -4, 4, -4, -4, 4, 4, -4, -4, 4, -4 };
@@ -91,6 +93,7 @@ public class Scene {
 	public void setRootNode(SceneGraphComponent rootNode) {
 		this.rootNode = rootNode;
 	}
+	
 
 	public RotateTool getRotateTool() {
 		return rotateTool;

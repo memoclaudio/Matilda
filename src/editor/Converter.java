@@ -3,13 +3,7 @@ package editor;
 public class Converter {
 
 	public static String convertMatrixToString(double[][] vertices, int n) {
-		
-//		System.out.println("vertices");
-//		for(int k=0;k<vertices.length;k++){
-//			System.out.println("{"+vertices[k][0]+", "+vertices[k][1]+", "+vertices[k][2]+"}");
-//		}
-//		System.out.println("");
-		
+	
 		int dim = vertices.length;
 		int[][] RGB = new int[dim][3];
 		int[][] pixels = new int[dim][1];
@@ -61,15 +55,10 @@ public class Converter {
 		}
 
 		for (int i = 0; i < 3; i++) {
-			// se voglio arrotondare per eccesso
-			//RGB[iRGB][i]= (int) Math.ceil(delta[i] * 255);
-			
 			// nuovo valore RGB
 			RGB[iRGB][i] = (int) (delta[i] * 255);
-		//	System.out.print(RGB[iRGB][i]+ " ");
-
-		}//System.out.println("");
-
+	
+		}
 		// serve per la discretizzazione
 		int redC = (int) (Math.round(RGB[iRGB][0])) << 16;
 		int greenC = (int) (Math.round(RGB[iRGB][1])) << 8;
