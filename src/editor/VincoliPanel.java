@@ -39,7 +39,10 @@ public class VincoliPanel  {
 	private Image loadFileIcon=null;
 	private Image okIcon=null;
 String constraints;
-	public VincoliPanel(int num, double[][][] fibre, int width, int height, JFrame f, PaintArea p) {
+DefaultTableModel t;
+
+	public VincoliPanel(int num, double[][][] fibre, int width, int height, JFrame f, PaintArea p, DefaultTableModel m) {
+	t=m;
 		int widthVincoliPanel=500;
 		int heightVincoliPanel=500;
 		nSymbols=num;
@@ -62,7 +65,6 @@ String constraints;
 		frame.setLayout(null);
 frame.getContentPane().setBackground(new Color(32,32,32));
 
-		DefaultTableModel t = new DefaultTableModel();
 		MyTable tabella = new MyTable();
 		tabella(tabella, t);
 	
@@ -265,9 +267,7 @@ frame.getContentPane().setBackground(new Color(32,32,32));
 	
 
 	public void tabella(MyTable tabella, DefaultTableModel t) {
-		t.addColumn("First Symbol");
-		t.addColumn("Second Symbol");
-
+	
 		tabella.setModel(t);
 		frame.getContentPane().setLayout(null);
 

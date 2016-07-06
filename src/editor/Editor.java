@@ -30,7 +30,7 @@ public class Editor {
 		PaintArea editor = new PaintArea();
 		JOGLViewer viewer = new JOGLViewer();
 		viewer.setSceneRoot(editor.rootNode);
-		viewer.setCameraPath(editor.scene.getCamPath()); // viewer.initializeTools();
+		viewer.setCameraPath(editor.camPath); // viewer.initializeTools();
 		ToolSystem toolSystem = ToolSystem.toolSystemForViewer(viewer);
 		toolSystem.initializeSceneTools();
 		double axesDeltaX = -2.3;
