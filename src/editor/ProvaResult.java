@@ -88,7 +88,7 @@ public class ProvaResult {
 	
 	
 	
-	ResultPanel r=new ResultPanel(fibre);
+	ResultPanel2 r=new ResultPanel2(fibre);
 	r.start();
 	
 		

@@ -33,7 +33,6 @@ public class Editor {
 		viewer.setCameraPath(editor.scene.getCamPath()); // viewer.initializeTools();
 		ToolSystem toolSystem = ToolSystem.toolSystemForViewer(viewer);
 		toolSystem.initializeSceneTools();
-		AxisArea Axes = new AxisArea();
 		double axesDeltaX = -2.3;
 		double axesDeltaY = -1.3;
 		double[] matrixCopy = new double[16];
@@ -97,19 +96,6 @@ public class Editor {
 		OptionPanel panel2 = new OptionPanel(width, height, editor, frame);
 		panel2.setLocation(0, 0);
 
-		JOGLViewer viewerAxes = new JOGLViewer();
-		viewerAxes.setSceneRoot(Axes.rootNode);
-		viewerAxes.setCameraPath(Axes.scene.getCamPath());
-		ToolSystem toolSystemAxes = ToolSystem.toolSystemForViewer(viewerAxes);
-		toolSystemAxes.initializeSceneTools();
-		// pannello assi
-		JPanel panelAssi = (JPanel) viewerAxes.getViewingComponent();
-		panelAssi.setSize(200, 200);
-		panelAssi.setLocation(width - 200, height - 200);
-
-		// costruzione del JFrame
-
-		// frame.add(panelAssi);
 		frame.add(panel);
 
 		frame.add(panel2);
@@ -125,7 +111,7 @@ public class Editor {
 
 		while (true) {
 			viewer.render();
-			viewerAxes.render();
+		
 
 			try {
 				Thread.sleep(20);

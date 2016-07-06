@@ -305,12 +305,12 @@ boolean  stop=false;
 					ArrayList<Fibra> fibreResult = null;
 					fibreResult = new ArrayList<Fibra>();
 					sbed(fibre, model, editor.constraints,soglia, fibreResult,pbar);
-					ResultPanel ResultPanel;
+					ResultPanel2 ResultPanel;
 					caricamento.setVisible(false);
 					if(!stop){
 					if(fibreResult.size()!=0){
 					//System.out.println(fibreResult.size());
-						ResultPanel=new ResultPanel(fibreResult);
+						ResultPanel=new ResultPanel2(fibreResult);
 					ResultPanel.start();
 					}else
 						JOptionPane.showMessageDialog(null, "Non è stato trovato alcun risultato");
