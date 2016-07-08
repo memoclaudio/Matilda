@@ -1,7 +1,5 @@
 package editor;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -18,35 +16,34 @@ import de.jreality.scene.DirectionalLight;
 import de.jreality.scene.Light;
 import de.jreality.scene.SceneGraphComponent;
 import de.jreality.scene.SceneGraphPath;
+import de.jreality.scene.Transformation;
 import de.jreality.scene.data.Attribute;
 import de.jreality.shader.Color;
 import de.jreality.shader.CommonAttributes;
 import de.jreality.tools.RotateTool;
 import de.jreality.toolsystem.ToolSystem;
 
-public class ResultPanel extends Thread implements KeyListener{
+public class ResultPanel2 extends Thread{
 
+	Scene scene = Scene.getInstance();
 
-	private static Camera camera;
 	SceneGraphComponent rootNode;
-	SceneGraphPath camPath;
-	private SceneGraphComponent cmp;
-	private SceneGraphComponent cameraNode;
+
+	SceneGraphComponent fibers = new SceneGraphComponent();
+
+
 private  boolean stopRequested = false;
-int xCamPosition=0;
-int yCamPosition=0;
-int zCamPosition=15;
-int step=2;
 
 
-	public ResultPanel(ArrayList<Fibra> fibre) {
+
+	public ResultPanel2(ArrayList<Fibra> fibre) {
 		
-	
+		
 		// INPUT
-		cmp = new SceneGraphComponent();
+		fibers = new SceneGraphComponent();
 		Appearance a = new Appearance();
 		a.setAttribute(CommonAttributes.DIFFUSE_COLOR, new Color(220,20,60));
-		cmp.setAppearance(a);
+		fibers.setAppearance(a);
 		
 		for(int k=0; k<fibre.size();k++){
 			
@@ -75,40 +72,37 @@ int step=2;
 		
 			SceneGraphComponent fibra=new SceneGraphComponent();
 			fibra.setGeometry(lsf.getGeometry());
-			cmp.addChild(fibra);
+			fibers.addChild(fibra);
 		
 		}
 			
+		double axesDeltaZ = 4;
+		double[] matrixCopy = new double[16];
+		for (int i = 0; i < 16; i++) {
+			
+			matrixCopy[i] = 0;
 		
-		
-		rootNode = new SceneGraphComponent();
-		cameraNode = new SceneGraphComponent();
-		SceneGraphComponent lightNode = new SceneGraphComponent();
-		rootNode.addChild(cmp);
-		rootNode.addChild(cameraNode);
-		cameraNode.addChild(lightNode);
-		RotateTool rotateTool = new RotateTool();
-		cmp.addTool(rotateTool);
-		Light dl = new DirectionalLight();
-		lightNode.setLight(dl);
-		camera = new Camera();
-		MatrixBuilder.euclidean().translate(xCamPosition,yCamPosition,zCamPosition).assignTo(cameraNode);
-		Appearance rootApp = new Appearance();
-		rootApp.setAttribute(CommonAttributes.BACKGROUND_COLOR,Color.WHITE);
-		rootNode.setAppearance(rootApp);
-		
-		cameraNode.setCamera(camera);
-		//camera.setPerspective(false);
-		 
-	
-		
+			if (i == 11) {
+				matrixCopy[i] = axesDeltaZ;
+			}
+			if(i%5==0) {
+				matrixCopy[i] = 1;
+			}
+		}
+		fibers.setTransformation(new Transformation(matrixCopy));
 
-		camPath = new SceneGraphPath();
-		camPath.push(rootNode);
-		camPath.push(cameraNode);
-		camPath.push(camera);
+		
+		fibers.addTool(scene.getRotateTool());
+			rootNode = new SceneGraphComponent();
 
-	camera.setFar(4000);
+			
+			rootNode.addChild(fibers);
+			
+			rootNode.addChild(scene.getCameraNode());
+			rootNode.setAppearance(scene.rootApp);
+			
+			scene.setRootNode(rootNode);
+		
 		
 		
 	}
@@ -127,7 +121,7 @@ int step=2;
 		
 		JOGLViewer	viewer = new JOGLViewer();
 		viewer.setSceneRoot(rootNode);
-		viewer.setCameraPath(camPath);
+		viewer.setCameraPath(scene.getCamPath());
 		ToolSystem toolSystem = ToolSystem.toolSystemForViewer(viewer);
 		toolSystem.initializeSceneTools();
 		JPanel panel = (JPanel) viewer.getViewingComponent();
@@ -136,7 +130,6 @@ int step=2;
 		panel.setSize((int) (0.8 * width), height);
 		panel.setLocation(width - (int) (0.8 * width), 0);
 	frame.add(panel);
-	panel.addKeyListener(this);
 	frame.addWindowListener(new WindowAdapter() {
 		  public void windowClosing(WindowEvent e) {
 			  stopRequested=true;
@@ -156,40 +149,6 @@ frame.	setVisible(true);
 			}
 		}
 
-		
-	}
-
-	@Override
-	public void keyPressed(KeyEvent arg0) {
-		 if (arg0.getKeyCode() == KeyEvent.VK_RIGHT) {
-	           xCamPosition-=step;
-	         }
-	        if (arg0.getKeyCode() == KeyEvent.VK_LEFT) {
-	        	 xCamPosition+=step;
-	        	
-	        }
-	        if (arg0.getKeyCode() == KeyEvent.VK_UP) {
-	        	 zCamPosition-=step;
-	        	 
-	        }
-	        if (arg0.getKeyCode() == KeyEvent.VK_DOWN) {
-	        	 zCamPosition+=step;
-	        	
-	        }
-	        
-	        MatrixBuilder.euclidean().translate(xCamPosition,yCamPosition,zCamPosition).assignTo(cameraNode);
-			
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 	

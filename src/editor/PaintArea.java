@@ -42,7 +42,6 @@ public class PaintArea extends AbstractTool {
 	private SceneGraphComponent lightNode = new SceneGraphComponent();
 	private RotateTool rotateTool = new RotateTool();
 	
-
 	private Geometry g;
 
 	Light dl = new DirectionalLight();
@@ -260,6 +259,9 @@ public class PaintArea extends AbstractTool {
 		this.n = n;
 	}
 
+	public String getMatrixView(){
+		return DefaultMatrixSupport.getSharedInstance().toString();
+	}
 	public int getNumPoints() {
 		return dim;
 	}
@@ -275,6 +277,8 @@ public class PaintArea extends AbstractTool {
 	public double[][] getModelVertex() {
 		return model.getVertex();
 	}
+	
+	
 
 	// algoritmo di Casteljau
 	private static double[] getCasteljauPoint(int r, int i, double t) {

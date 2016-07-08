@@ -15,6 +15,9 @@ public class Fibra {
 	public double[][] getVertex(){
 		return vertices;
 	}
+	public void setVertex(double[][]v){
+	 vertices=v;
+	}
 	
 	public void setPoint(int i,double x, double y,double z){
 		vertices[i][0] = x;

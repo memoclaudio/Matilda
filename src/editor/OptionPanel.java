@@ -55,6 +55,8 @@ public class OptionPanel extends JPanel {
 	private Image vincoliIcon = null;
 	private Image infoIcon = null;
 	private Image resetCamIcon = null;
+	private Image sogliaIcon = null;
+	int soglia = 30;
 
 	int valueBar = 0;
 	int fetta;
@@ -88,6 +90,7 @@ public class OptionPanel extends JPanel {
 			vincoliIcon = ImageIO.read(new File("src/images/vincoli.png"));
 			infoIcon = ImageIO.read(new File("src/images/info.png"));
 			resetCamIcon = ImageIO.read(new File("src/images/eye.png"));
+			sogliaIcon = ImageIO.read(new File("src/images/soglia.png"));
 
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -256,7 +259,7 @@ public class OptionPanel extends JPanel {
 				(int) (height / 7) * 6 - 80);
 		start.setSize(new Dimension(80, 80));
 		add(start);
-
+	
 		start.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -313,8 +316,16 @@ public class OptionPanel extends JPanel {
 											.convertMatrixToString(
 													editor.getModelVertex(),
 													editor.getNumColors());
+									
+//String model="44433333311000000001111111000013333332222223333333";
+//									for(int i=0;i<editor.getModelVertex().length;i++)
+//									{
+//										System.out.println(editor.getModelVertex()[i][0]+" "+editor.getModelVertex()[i][1]+" "+editor.getModelVertex()[i][2]);
+//									}
+									
+//									System.out.println("Stringa\n"+model);
 									// pbar.setVisible(true);
-									int soglia = 6;
+									
 									ArrayList<Fibra> fibreResult = null;
 									fibreResult = new ArrayList<Fibra>();
 									sbed(fibre, model, editor.constraints,
@@ -353,7 +364,7 @@ public class OptionPanel extends JPanel {
 		});
 
 		newimg = infoIcon
-				.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+				.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
 		// scaled icon
 		newIcon = new ImageIcon(newimg);
 
@@ -361,10 +372,10 @@ public class OptionPanel extends JPanel {
 		infoButton.setIcon(newIcon);
 		infoButton.setBorder(null);
 		infoButton.setContentAreaFilled(false);
-		infoButton.setSize(30, 30);
+		infoButton.setSize(15, 15);
 		infoButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		infoButton.setLocation((int) ((0.1 * width) / 4) + 40,
-				(int) (height / 7) * 4 - 40);
+		infoButton.setLocation((int) ((0.1 * width) / 4)*2 + 100,
+				(int) (height / 7) * 6-10 );
 		infoButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -435,6 +446,61 @@ public class OptionPanel extends JPanel {
 		});
 		add(infoButton);
 
+		
+		newimg = sogliaIcon.getScaledInstance(30, 30,
+				java.awt.Image.SCALE_SMOOTH);
+		// scaled icon
+		newIcon = new ImageIcon(newimg);
+
+		JButton changeThreshold = new JButton();
+		changeThreshold.setIcon(newIcon);
+		changeThreshold.setBorder(null);
+		changeThreshold.setContentAreaFilled(false);
+		changeThreshold.setSize(30, 30);
+		changeThreshold.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		changeThreshold.setLocation((int) ((0.1 * width) / 4) + 40,
+				(int) (height / 7) * 4 - 40);
+
+		changeThreshold.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// n
+				JTextField textField = new JTextField(20);
+				textField.setText(Integer.toString(soglia));
+				textField.setSize(130, 50);
+				textField.setHorizontalAlignment(JTextField.CENTER);
+
+				int choice = JOptionPane.showConfirmDialog(f, textField,
+						"Value of threshold", JOptionPane.OK_CANCEL_OPTION);
+				if (choice == JOptionPane.OK_OPTION) {
+					try {
+						if (Integer.parseInt(textField.getText()) >= 0)
+							soglia=Integer.parseInt(textField
+									.getText());
+						else {
+							JOptionPane.showMessageDialog(null,
+									"Inserire un intero positivo");
+							textField.setText(Integer.toString(soglia));
+						}
+
+					} catch (NumberFormatException exc) {
+						textField.setText(Integer.toString(soglia
+								));
+
+						JOptionPane.showMessageDialog(null,
+								"Inserire un intero positivo");
+					}
+
+				}
+
+			}
+		});
+		add(changeThreshold);
+
+		
+		
+		
+		
 		newimg = resetCamIcon.getScaledInstance(30, 30,
 				java.awt.Image.SCALE_SMOOTH);
 		// scaled icon
@@ -458,6 +524,7 @@ public class OptionPanel extends JPanel {
 		});
 		add(resetCamera);
 
+		
 		newimg = nColorsIcon.getScaledInstance(30, 30,
 				java.awt.Image.SCALE_SMOOTH);
 		// scaled icon
@@ -550,6 +617,7 @@ public class OptionPanel extends JPanel {
 		start.setToolTipText("Start with research");
 		resetCamera.setToolTipText("Reset the angle of view");
 		infoButton.setToolTipText("Help");
+		changeThreshold.setToolTipText("change value of threshold");
 
 	}
 
