@@ -12,12 +12,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -56,15 +60,17 @@ public class OptionPanel extends JPanel {
 	private Image infoIcon = null;
 	private Image resetCamIcon = null;
 	private Image sogliaIcon = null;
+	private Image saveModelIcon = null;
+	private Image uploadModelIcon = null;
 	int soglia = 30;
 
 	int valueBar = 0;
 	int fetta;
 	boolean stop = false;
-	private DefaultTableModel model ;
-	
+	private DefaultTableModel model;
+
 	public OptionPanel(int w, int h, PaintArea e, JFrame f) {
-		//Jtable's model
+		// Jtable's model
 		model = new DefaultTableModel();
 		model.addColumn("First Symbol");
 		model.addColumn("Second Symbol");
@@ -91,10 +97,12 @@ public class OptionPanel extends JPanel {
 			infoIcon = ImageIO.read(new File("src/images/info.png"));
 			resetCamIcon = ImageIO.read(new File("src/images/eye.png"));
 			sogliaIcon = ImageIO.read(new File("src/images/soglia.png"));
+			saveModelIcon = ImageIO.read(new File("src/images/save.png"));
+			uploadModelIcon = ImageIO.read(new File("src/images/upload.png"));
 
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(null,
+					"Errore durante il caricamento delle immagini");
 		}
 
 		// reset
@@ -255,11 +263,11 @@ public class OptionPanel extends JPanel {
 		start.setBorder(null);
 		start.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		start.setContentAreaFilled(false);
-		start.setLocation((int) (0.2 * width) / 2 - 40,
-				(int) (height / 7) * 6 - 80);
+		start.setLocation((int) (0.2 * width) / 2 - 45,
+				(int) (height / 7) * 6 -55);
 		start.setSize(new Dimension(80, 80));
 		add(start);
-	
+
 		start.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -293,7 +301,7 @@ public class OptionPanel extends JPanel {
 							}
 						});
 						caricamento.validate();
-						
+
 						pbar.setVisible(true);
 
 						caricamento.pack();
@@ -316,16 +324,18 @@ public class OptionPanel extends JPanel {
 											.convertMatrixToString(
 													editor.getModelVertex(),
 													editor.getNumColors());
-									
-//String model="44433333311000000001111111000013333332222223333333";
-//									for(int i=0;i<editor.getModelVertex().length;i++)
-//									{
-//										System.out.println(editor.getModelVertex()[i][0]+" "+editor.getModelVertex()[i][1]+" "+editor.getModelVertex()[i][2]);
-//									}
-									
-//									System.out.println("Stringa\n"+model);
+
+							//	String model="44433333311000000001111111000013333332222223333333";
+							// specchiata //String model="55422244551100001111111100000000011554422222222333";
+//									 for(int
+//									 i=0;i<editor.getModelVertex().length;i++)
+//									 {
+//									 System.out.println(editor.getModelVertex()[i][0]+" "+editor.getModelVertex()[i][1]+" "+editor.getModelVertex()[i][2]);
+//									 }
+
+									System.out.println("Stringa\n" + model);
 									// pbar.setVisible(true);
-									
+
 									ArrayList<Fibra> fibreResult = null;
 									fibreResult = new ArrayList<Fibra>();
 									sbed(fibre, model, editor.constraints,
@@ -374,8 +384,8 @@ public class OptionPanel extends JPanel {
 		infoButton.setContentAreaFilled(false);
 		infoButton.setSize(15, 15);
 		infoButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		infoButton.setLocation((int) ((0.1 * width) / 4)*2 + 100,
-				(int) (height / 7) * 6-10 );
+		infoButton.setLocation((int) ((0.1 * width) / 4) * 2 + 100,
+				(int) (height / 7) * 6 - 10);
 		infoButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -390,55 +400,52 @@ public class OptionPanel extends JPanel {
 				frame.setLayout(null);
 				frame.getContentPane().setBackground(new Color(32, 32, 32));
 
-				JLabel title=new JLabel("Three steps:");
-				JLabel instruction1=new JLabel("a- Draw a model");
-				JLabel instruction2=new JLabel("b- Upload a file.tck");
-				JLabel instruction3=new JLabel("c- Define constraints (optional)");
-				JLabel start=new JLabel("...and start");
-				
-				
-				title.setForeground(new Color(220,20,60));
+				JLabel title = new JLabel("Three steps:");
+				JLabel instruction1 = new JLabel("a- Draw a model");
+				JLabel instruction2 = new JLabel("b- Upload a file.tck");
+				JLabel instruction3 = new JLabel(
+						"c- Define constraints (optional)");
+				JLabel start = new JLabel("...and start");
+
+				title.setForeground(new Color(220, 20, 60));
 				title.setFont(new Font("Kokonor", Font.PLAIN, 40));
 				title.setBounds(160, 10, 300, 80);
-			//	title.setHorizontalAlignment(JLabel.CENTER);
-				title.setLocation(130,20);
+				// title.setHorizontalAlignment(JLabel.CENTER);
+				title.setLocation(130, 20);
 				frame.getContentPane().add(title);
-				
-				instruction1.setForeground(new Color(220,20,60));
+
+				instruction1.setForeground(new Color(220, 20, 60));
 				instruction1.setFont(new Font("Kokonor", Font.PLAIN, 25));
 				instruction1.setBounds(160, 10, 472, 80);
-			//	instruction1.setHorizontalAlignment(JLabel.CENTER);
-				instruction1.setLocation(30,120);
-				
+				// instruction1.setHorizontalAlignment(JLabel.CENTER);
+				instruction1.setLocation(30, 120);
+
 				frame.getContentPane().add(instruction1);
-				
-				instruction2.setForeground(new Color(220,20,60));
+
+				instruction2.setForeground(new Color(220, 20, 60));
 				instruction2.setFont(new Font("Kokonor", Font.PLAIN, 25));
 				instruction2.setBounds(160, 10, 472, 80);
-			//	instruction2.setHorizontalAlignment(JLabel.CENTER);
-				instruction2.setLocation(30,180);
-				
+				// instruction2.setHorizontalAlignment(JLabel.CENTER);
+				instruction2.setLocation(30, 180);
+
 				frame.getContentPane().add(instruction2);
-				
-				instruction3.setForeground(new Color(220,20,60));
+
+				instruction3.setForeground(new Color(220, 20, 60));
 				instruction3.setFont(new Font("Kokonor", Font.PLAIN, 25));
 				instruction3.setBounds(160, 10, 472, 80);
-			//	instruction3.setHorizontalAlignment(JLabel.CENTER);
-				instruction3.setLocation(30,240);
+				// instruction3.setHorizontalAlignment(JLabel.CENTER);
+				instruction3.setLocation(30, 240);
 
 				frame.getContentPane().add(instruction3);
 
-				
-				start.setForeground(new Color(220,20,60));
+				start.setForeground(new Color(220, 20, 60));
 				start.setFont(new Font("Kokonor", Font.PLAIN, 30));
 				start.setBounds(160, 10, 472, 80);
-			//	start.setHorizontalAlignment(JLabel.CENTER);
-				start.setLocation(300,400);
-				
+				// start.setHorizontalAlignment(JLabel.CENTER);
+				start.setLocation(300, 400);
+
 				frame.getContentPane().add(start);
 
-
-				
 				frame.pack();
 
 				frame.setVisible(true);
@@ -446,7 +453,6 @@ public class OptionPanel extends JPanel {
 		});
 		add(infoButton);
 
-		
 		newimg = sogliaIcon.getScaledInstance(30, 30,
 				java.awt.Image.SCALE_SMOOTH);
 		// scaled icon
@@ -475,8 +481,7 @@ public class OptionPanel extends JPanel {
 				if (choice == JOptionPane.OK_OPTION) {
 					try {
 						if (Integer.parseInt(textField.getText()) >= 0)
-							soglia=Integer.parseInt(textField
-									.getText());
+							soglia = Integer.parseInt(textField.getText());
 						else {
 							JOptionPane.showMessageDialog(null,
 									"Inserire un intero positivo");
@@ -484,8 +489,7 @@ public class OptionPanel extends JPanel {
 						}
 
 					} catch (NumberFormatException exc) {
-						textField.setText(Integer.toString(soglia
-								));
+						textField.setText(Integer.toString(soglia));
 
 						JOptionPane.showMessageDialog(null,
 								"Inserire un intero positivo");
@@ -497,10 +501,6 @@ public class OptionPanel extends JPanel {
 		});
 		add(changeThreshold);
 
-		
-		
-		
-		
 		newimg = resetCamIcon.getScaledInstance(30, 30,
 				java.awt.Image.SCALE_SMOOTH);
 		// scaled icon
@@ -524,7 +524,6 @@ public class OptionPanel extends JPanel {
 		});
 		add(resetCamera);
 
-		
 		newimg = nColorsIcon.getScaledInstance(30, 30,
 				java.awt.Image.SCALE_SMOOTH);
 		// scaled icon
@@ -607,6 +606,152 @@ public class OptionPanel extends JPanel {
 		});
 
 		add(vincoliButton);
+		
+		
+		
+		newimg = saveModelIcon.getScaledInstance(30, 30,
+				java.awt.Image.SCALE_SMOOTH);
+		// scaled icon
+		newIcon = new ImageIcon(newimg);
+		JButton saveModelButton = new JButton();
+		saveModelButton.setIcon(newIcon);
+		saveModelButton.setBorder(null);
+		saveModelButton.setContentAreaFilled(false);
+		saveModelButton.setSize(30, 30);
+		saveModelButton.setLocation((int) ((0.1 * width) / 4) + 40,
+				(int) (height / 7) * 5 - 40);
+		saveModelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		saveModelButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {JFileChooser chooser = new JFileChooser();
+			if(editor.getNPolygonPoints()>0){
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt",
+						"txt");
+				chooser.setFileFilter(filter);
+			chooser.setCurrentDirectory( new File( "./") );
+			int actionDialog = chooser.showSaveDialog(f);
+			if (actionDialog == JFileChooser.APPROVE_OPTION )
+			{
+			    File fileName = new File( chooser.getSelectedFile( ) + ".txt" );
+			    if(fileName == null)
+		        return;
+			    if(fileName.exists())
+			    {
+			        actionDialog = JOptionPane.showConfirmDialog(f,
+			                           "Replace existing file?");
+//			        // may need to check for cancel option as well
+			        if (actionDialog == JOptionPane.NO_OPTION)
+			            return;
+			    	
+			    }
+			    BufferedWriter outFile=null;
+//			    // okay to write file
+			    try {
+				 outFile = new BufferedWriter( new FileWriter( fileName ) );
+				 Iterator<double[]> it =  editor.getPolygonPoints().iterator();
+		            while (it.hasNext()) {
+		            	 double[] vertice = it.next();
+				    	outFile.write(vertice[0]+" "+vertice[1]+" "+vertice[2]+"\n");
+				    }
+				 
+		            outFile.flush( ); // redundant, done by close()
+				    outFile.close( );
+				 
+				 
+			    } catch (IOException e1) {
+			    	JOptionPane.showMessageDialog(null,
+							"Impossibile salvare il modello");
+				}
+			   
+		}
+			
+			}
+			else 
+				JOptionPane.showMessageDialog(null,
+						"Impossibile salvare: modello vuoto");			}
+		});
+
+		add(saveModelButton);
+		
+		
+		newimg = uploadModelIcon.getScaledInstance(30, 30,
+				java.awt.Image.SCALE_SMOOTH);
+		// scaled icon
+		newIcon = new ImageIcon(newimg);
+		JButton uploadModelButton = new JButton();
+		uploadModelButton.setIcon(newIcon);
+		uploadModelButton.setBorder(null);
+		uploadModelButton.setContentAreaFilled(false);
+		uploadModelButton.setSize(30, 30);
+		uploadModelButton.setLocation((int) ((0.1 * width) / 4)*3 + 40,
+				(int) (height / 7) * 5 - 40);
+		uploadModelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		uploadModelButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt",
+						"txt");
+				chooser.setFileFilter(filter);
+				int returnVal = chooser.showOpenDialog(null);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					/*
+					 * Gestire eccezioni sollevate da read
+					 */
+ 
+					BufferedReader br = null;
+
+					try {
+
+						String sCurrentLine;
+
+						br = new BufferedReader(new FileReader(chooser.getSelectedFile()
+								.getPath()));
+						editor.points.clear();
+						while ((sCurrentLine = br.readLine()) != null) {
+							String[] var = sCurrentLine.split(" ");
+							double[] point=new double[3];
+							for(int i=0;i<point.length;i++){
+								point[i]=Double.parseDouble(var[i]);
+								
+							}
+							editor.points.add(point);
+							}
+						
+						editor.resetTransformation();
+						editor.updatePoints();
+						editor.updateGeometry();
+							
+						
+
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(null,
+								"Impossibile caricare il modello");
+					} finally {
+						try {
+							if (br != null)br.close();
+						} catch (IOException ex) {
+							JOptionPane.showMessageDialog(null,
+									"Errore durante la chiusura del file");
+						}
+					}
+
+				}
+
+				
+				
+			
+			}
+		});
+
+		add(uploadModelButton);
+		
+		
+		
+		
 
 		vincoliButton.setToolTipText("Add constraints");
 		n.setToolTipText("Number of polygon points");
@@ -617,7 +762,9 @@ public class OptionPanel extends JPanel {
 		start.setToolTipText("Start with research");
 		resetCamera.setToolTipText("Reset the angle of view");
 		infoButton.setToolTipText("Help");
-		changeThreshold.setToolTipText("change value of threshold");
+		changeThreshold.setToolTipText("Change value of threshold");
+		saveModelButton.setToolTipText("Save model");
+		uploadModelButton.setToolTipText("Upload a model");
 
 	}
 
@@ -625,7 +772,11 @@ public class OptionPanel extends JPanel {
 			int soglia, ArrayList<Fibra> fibreResult, JProgressBar pbar) {
 		FileOutputStream sbedTmp = null;
 		PrintStream scriviSbed = null;
+
 		try {
+			// FileOutputStream fibreDiscr = new
+			// FileOutputStream("src/fibreDiscretizzate.txt");
+			// PrintStream scriviFibre = new PrintStream(fibreDiscr);
 
 			// risultati = new FileOutputStream("src/risultati.txt");
 			// PrintStream scrivi = new PrintStream(risultati);
@@ -642,6 +793,7 @@ public class OptionPanel extends JPanel {
 				scriviSbed.println(model);
 				scriviSbed.println(Converter.convertMatrixToString(fibre[i],
 						editor.getNumColors()));
+				// scriviFibre.println(Converter.convertMatrixToString(fibre[i],editor.getNumColors()));
 				scriviSbed.print(constraints);
 
 				String[] s = { "/bin/sh", "-c",
@@ -683,7 +835,8 @@ public class OptionPanel extends JPanel {
 			// pbar.setVisible(false);
 
 		} catch (IOException ex) {
-			System.out.println("Errore: " + ex);
+			JOptionPane.showMessageDialog(null,
+					"Errore");
 			System.exit(1);
 		}
 	}
@@ -694,7 +847,7 @@ public class OptionPanel extends JPanel {
 		g.setColor(new Color(32, 32, 32));
 		g.fillRect(0, 0, width, height);
 		g.setColor(new Color(220, 20, 60));
-		g.drawRect(50, 50, 145, 400);
+		g.drawRect(50, 50, 145, 500);
 	}
 
 }

@@ -278,6 +278,12 @@ public class PaintArea extends AbstractTool {
 		return model.getVertex();
 	}
 	
+	public  List<double[]> getPolygonPoints() {
+		return points;
+	}
+	public  int getNPolygonPoints() {
+		return points.size();
+	}
 	
 
 	// algoritmo di Casteljau
