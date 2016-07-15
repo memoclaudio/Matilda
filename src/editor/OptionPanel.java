@@ -264,7 +264,7 @@ public class OptionPanel extends JPanel {
 		start.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		start.setContentAreaFilled(false);
 		start.setLocation((int) (0.2 * width) / 2 - 45,
-				(int) (height / 7) * 6 -55);
+				(int) (height / 7) * 6 - 55);
 		start.setSize(new Dimension(80, 80));
 		add(start);
 
@@ -325,13 +325,15 @@ public class OptionPanel extends JPanel {
 													editor.getModelVertex(),
 													editor.getNumColors());
 
-							//	String model="44433333311000000001111111000013333332222223333333";
-							// specchiata //String model="55422244551100001111111100000000011554422222222333";
-//									 for(int
-//									 i=0;i<editor.getModelVertex().length;i++)
-//									 {
-//									 System.out.println(editor.getModelVertex()[i][0]+" "+editor.getModelVertex()[i][1]+" "+editor.getModelVertex()[i][2]);
-//									 }
+									// String
+									// model="44433333311000000001111111000013333332222223333333";
+									// specchiata //String
+									// model="55422244551100001111111100000000011554422222222333";
+									// for(int
+									// i=0;i<editor.getModelVertex().length;i++)
+									// {
+									// System.out.println(editor.getModelVertex()[i][0]+" "+editor.getModelVertex()[i][1]+" "+editor.getModelVertex()[i][2]);
+									// }
 
 									System.out.println("Stringa\n" + model);
 									// pbar.setVisible(true);
@@ -606,9 +608,7 @@ public class OptionPanel extends JPanel {
 		});
 
 		add(vincoliButton);
-		
-		
-		
+
 		newimg = saveModelIcon.getScaledInstance(30, 30,
 				java.awt.Image.SCALE_SMOOTH);
 		// scaled icon
@@ -624,57 +624,58 @@ public class OptionPanel extends JPanel {
 		saveModelButton.addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {JFileChooser chooser = new JFileChooser();
-			if(editor.getNPolygonPoints()>0){
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt",
-						"txt");
-				chooser.setFileFilter(filter);
-			chooser.setCurrentDirectory( new File( "./") );
-			int actionDialog = chooser.showSaveDialog(f);
-			if (actionDialog == JFileChooser.APPROVE_OPTION )
-			{
-			    File fileName = new File( chooser.getSelectedFile( ) + ".txt" );
-			    if(fileName == null)
-		        return;
-			    if(fileName.exists())
-			    {
-			        actionDialog = JOptionPane.showConfirmDialog(f,
-			                           "Replace existing file?");
-//			        // may need to check for cancel option as well
-			        if (actionDialog == JOptionPane.NO_OPTION)
-			            return;
-			    	
-			    }
-			    BufferedWriter outFile=null;
-//			    // okay to write file
-			    try {
-				 outFile = new BufferedWriter( new FileWriter( fileName ) );
-				 Iterator<double[]> it =  editor.getPolygonPoints().iterator();
-		            while (it.hasNext()) {
-		            	 double[] vertice = it.next();
-				    	outFile.write(vertice[0]+" "+vertice[1]+" "+vertice[2]+"\n");
-				    }
-				 
-		            outFile.flush( ); // redundant, done by close()
-				    outFile.close( );
-				 
-				 
-			    } catch (IOException e1) {
-			    	JOptionPane.showMessageDialog(null,
-							"Impossibile salvare il modello");
-				}
-			   
-		}
-			
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				if (editor.getNPolygonPoints() > 0) {
+					FileNameExtensionFilter filter = new FileNameExtensionFilter(
+							"txt", "txt");
+					chooser.setFileFilter(filter);
+					chooser.setCurrentDirectory(new File("./"));
+					int actionDialog = chooser.showSaveDialog(f);
+					if (actionDialog == JFileChooser.APPROVE_OPTION) {
+						File fileName = new File(chooser.getSelectedFile()
+								+ ".txt");
+						if (fileName == null)
+							return;
+						if (fileName.exists()) {
+							actionDialog = JOptionPane.showConfirmDialog(f,
+									"Replace existing file?");
+							// // may need to check for cancel option as well
+							if (actionDialog == JOptionPane.NO_OPTION)
+								return;
+
+						}
+						BufferedWriter outFile = null;
+						// // okay to write file
+						try {
+							outFile = new BufferedWriter(new FileWriter(
+									fileName));
+							Iterator<double[]> it = editor.getPolygonPoints()
+									.iterator();
+							while (it.hasNext()) {
+								double[] vertice = it.next();
+								outFile.write(vertice[0] + " " + vertice[1]
+										+ " " + vertice[2] + "\n");
+							}
+
+							outFile.flush(); // redundant, done by close()
+							outFile.close();
+
+						} catch (IOException e1) {
+							JOptionPane.showMessageDialog(null,
+									"Impossibile salvare il modello");
+						}
+
+					}
+
+				} else
+					JOptionPane.showMessageDialog(null,
+							"Impossibile salvare: modello vuoto");
 			}
-			else 
-				JOptionPane.showMessageDialog(null,
-						"Impossibile salvare: modello vuoto");			}
 		});
 
 		add(saveModelButton);
-		
-		
+
 		newimg = uploadModelIcon.getScaledInstance(30, 30,
 				java.awt.Image.SCALE_SMOOTH);
 		// scaled icon
@@ -684,7 +685,7 @@ public class OptionPanel extends JPanel {
 		uploadModelButton.setBorder(null);
 		uploadModelButton.setContentAreaFilled(false);
 		uploadModelButton.setSize(30, 30);
-		uploadModelButton.setLocation((int) ((0.1 * width) / 4)*3 + 40,
+		uploadModelButton.setLocation((int) ((0.1 * width) / 4) * 3 + 40,
 				(int) (height / 7) * 5 - 40);
 		uploadModelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		uploadModelButton.addActionListener(new ActionListener() {
@@ -693,46 +694,45 @@ public class OptionPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser chooser = new JFileChooser();
 
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt",
-						"txt");
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(
+						"txt", "txt");
 				chooser.setFileFilter(filter);
 				int returnVal = chooser.showOpenDialog(null);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					/*
 					 * Gestire eccezioni sollevate da read
 					 */
- 
+
 					BufferedReader br = null;
 
 					try {
 
 						String sCurrentLine;
 
-						br = new BufferedReader(new FileReader(chooser.getSelectedFile()
-								.getPath()));
+						br = new BufferedReader(new FileReader(chooser
+								.getSelectedFile().getPath()));
 						editor.points.clear();
 						while ((sCurrentLine = br.readLine()) != null) {
 							String[] var = sCurrentLine.split(" ");
-							double[] point=new double[3];
-							for(int i=0;i<point.length;i++){
-								point[i]=Double.parseDouble(var[i]);
-								
+							double[] point = new double[3];
+							for (int i = 0; i < point.length; i++) {
+								point[i] = Double.parseDouble(var[i]);
+
 							}
 							editor.points.add(point);
-							}
-						
+						}
+
 						editor.resetTransformation();
 						editor.updatePoints();
 						editor.updateGeometry();
-							
-						
 
 					} catch (IOException e1) {
 						JOptionPane.showMessageDialog(null,
 								"Impossibile caricare il modello");
 					} finally {
 						try {
-							if (br != null)br.close();
+							if (br != null)
+								br.close();
 						} catch (IOException ex) {
 							JOptionPane.showMessageDialog(null,
 									"Errore durante la chiusura del file");
@@ -741,17 +741,10 @@ public class OptionPanel extends JPanel {
 
 				}
 
-				
-				
-			
 			}
 		});
 
 		add(uploadModelButton);
-		
-		
-		
-		
 
 		vincoliButton.setToolTipText("Add constraints");
 		n.setToolTipText("Number of polygon points");
@@ -798,6 +791,10 @@ public class OptionPanel extends JPanel {
 
 				String[] s = { "/bin/sh", "-c",
 						"cat src/sbedTmp.txt | ./src/SBED" };
+				/*
+				 * per windows, da sistemare String[] s =
+				 * {"cmd.exe","/c","type src\\sbedTmp.txt | src\\sbed.exe" };
+				 */
 				Process p = Runtime.getRuntime().exec(s);
 				BufferedReader in = new BufferedReader(new InputStreamReader(
 						p.getInputStream()));
@@ -835,8 +832,7 @@ public class OptionPanel extends JPanel {
 			// pbar.setVisible(false);
 
 		} catch (IOException ex) {
-			JOptionPane.showMessageDialog(null,
-					"Errore");
+			JOptionPane.showMessageDialog(null, "Errore");
 			System.exit(1);
 		}
 	}

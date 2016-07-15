@@ -122,6 +122,7 @@ public class PaintArea extends AbstractTool {
 		draggedPoint();
 
 		cmpPointSet.addTool(dragEventTool);
+		
 		rootNode.addChild(cmp);
 		rootNode.addChild(cameraNode);
 
@@ -188,11 +189,14 @@ public class PaintArea extends AbstractTool {
 		if (points.size() > 0) {
 			pointSet.setVertexCount(points.size());
 			pointSet.setVertexCoordinates(points.toArray(new double[0][]));
+			double pdim[]=new double[points.size()];
 			Color clr[] = new Color[points.size()];
 			for (int i = 0; i < clr.length; i++) {
 				clr[i] = Color.BLUE;
+				pdim[i]=1.01;
 			}
 			pointSet.setVertexColors(clr);
+			pointSet.setVertexAttribute(Attribute.RELATIVE_RADII,pdim);
 			pointSet.update();
 		}
 	}

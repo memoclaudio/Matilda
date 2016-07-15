@@ -22,6 +22,9 @@ public class Converter {
 				RGB, pixels, vertices);
 		iRGB++;
 
+		
+
+		
 		String myString = "";
 		// funzione che discretizza i colori
 		Quantize.quantizeImage(pixels, n);
