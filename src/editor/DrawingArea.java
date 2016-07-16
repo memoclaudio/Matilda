@@ -1,8 +1,13 @@
+/*This class uses jreality library to build the scene and represents the drawing area where user
+ * draw the spline 
+ */
 package editor;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JOptionPane;
 
 import de.jreality.geometry.IndexedLineSetFactory;
 import de.jreality.geometry.PointSetFactory;
@@ -33,39 +38,30 @@ import de.jreality.toolsystem.ToolUtility;
 import de.jreality.util.DefaultMatrixSupport;
 import de.jreality.util.Input;
 
-public class PaintArea extends AbstractTool {
-	
-	Appearance rootApp = new Appearance();
+public class DrawingArea extends AbstractTool {
+
+	private Appearance rootApp = new Appearance();
 	private static Camera camera = new Camera();
-	SceneGraphPath camPath = new SceneGraphPath();
+	private SceneGraphPath camPath = new SceneGraphPath();
 	static SceneGraphComponent cameraNode = new SceneGraphComponent();
 	private SceneGraphComponent lightNode = new SceneGraphComponent();
 	private RotateTool rotateTool = new RotateTool();
-	
 	private Geometry g;
-
-	Light dl = new DirectionalLight();
-
-
-
-	static List<double[]> points = new ArrayList<double[]>();
-	static IndexedLineSetFactory lsf = new IndexedLineSetFactory();
-	static PointSetFactory pointSet = new PointSetFactory();
-	// private static Camera camera;
-	static DragEventTool dragEventTool;
-	static boolean mouseInScreen;
-	private static int dim;// num of points model;
+	private Light dl = new DirectionalLight();
+	private static List<double[]> points = new ArrayList<double[]>();
+	private static IndexedLineSetFactory lsf = new IndexedLineSetFactory();
+	private static PointSetFactory pointSet = new PointSetFactory();
+	private static DragEventTool dragEventTool;
+	private static boolean mouseInScreen;
+	private static int dim;// number of points model;
 	private static int n; // number of colors for quantization
-	private static Fibra model;
-	SceneGraphComponent rootNode;
-	// SceneGraphPath camPath;
-	SceneGraphComponent cmp;
-	String constraints = "";
+	private static Fiber model;
+	private SceneGraphComponent rootNode;
+	private SceneGraphComponent spline;
+	private String constraints = "";
+	private SceneGraphComponent axes = new SceneGraphComponent();
 
-	// private SceneGraphComponent cameraNode;
-	SceneGraphComponent axes = new SceneGraphComponent();
-
-	public PaintArea() {
+	public DrawingArea() {
 
 		dim = 30;
 		n = 6;
@@ -73,10 +69,6 @@ public class PaintArea extends AbstractTool {
 		addCurrentSlot(InputSlot.SHIFT_LEFT_BUTTON, "add a new point");
 		dragEventTool = new DragEventTool();
 		rootNode = new SceneGraphComponent();
-		
-
-		
-		
 		cameraNode.setCamera(camera);
 		camPath.push(rootNode);
 		camPath.push(cameraNode);
@@ -84,59 +76,44 @@ public class PaintArea extends AbstractTool {
 		lightNode.setLight(dl);
 		cameraNode.addChild(lightNode);
 		camera.setPerspective(false);
-
-		
-		
-		rootApp.setAttribute(CommonAttributes.BACKGROUND_COLOR,new Color(40,40,40));
-		rootApp.setAttribute(CommonAttributes.DIFFUSE_COLOR,Color.white);
+		rootApp.setAttribute(CommonAttributes.BACKGROUND_COLOR, new Color(40,
+				40, 40));
+		rootApp.setAttribute(CommonAttributes.DIFFUSE_COLOR, Color.white);
 		rootApp.setAttribute("transparencyEnabled", true);
-	      rootApp.setAttribute("transparency", 0.7);
-//		
+		rootApp.setAttribute("transparency", 0.7);
 		MatrixBuilder.euclidean().translate(0, 0, 3).assignTo(cameraNode);
-
 		double[] defaultPoints = { -4, -4, -4, 4, -4, -4, 4, 4, -4, -4, 4, -4 };
-
 		g = (Primitives.texturedQuadrilateral(defaultPoints));
-
 		try {
-			TextureUtility.createTexture(rootApp,CommonAttributes.POLYGON_SHADER,ImageData.load(Input.getInput("images/redGrid.png")));
-		} catch (IOException e) {
-			e.printStackTrace();
+			TextureUtility.createTexture(rootApp,
+					CommonAttributes.POLYGON_SHADER,
+					ImageData.load(Input.getInput("images/redGrid.png")));
+		} catch (IOException e) {JOptionPane.showMessageDialog(null,"unable to load grid image");
 		}
-	
-		cmp = new SceneGraphComponent();
+		spline = new SceneGraphComponent();
 		SceneGraphComponent cmplsf = new SceneGraphComponent();
 		SceneGraphComponent cmpPointSet = new SceneGraphComponent();
 		cmplsf.setGeometry(lsf.getGeometry());
 		cmpPointSet.setGeometry(pointSet.getGeometry());
-		cmp.addChild(cmplsf);
-		cmp.addChild(cmpPointSet);
-		cmp.addTool(this);
-
+		spline.addChild(cmplsf);
+		spline.addChild(cmpPointSet);
+		spline.addTool(this);
 		Appearance a = new Appearance();
 		a.setAttribute(CommonAttributes.DIFFUSE_COLOR, new Color(220, 20, 60));
 		a.setAttribute("transparencyEnabled", false);
-
-		cmp.setAppearance(a);
-
+		spline.setAppearance(a);
 		draggedPoint();
-
 		cmpPointSet.addTool(dragEventTool);
-		
-		rootNode.addChild(cmp);
+		rootNode.addChild(spline);
 		rootNode.addChild(cameraNode);
-
-		cmp.addTool(rotateTool);
-		MatrixBuilder.euclidean().assignTo(cmp);
+		spline.addTool(rotateTool);
+		MatrixBuilder.euclidean().assignTo(spline);
 		rootNode.setAppearance(rootApp);
 		rootNode.setGeometry(g);
 		DefaultMatrixSupport.getSharedInstance().storeDefaultMatrices(rootNode);
-
 		axes = AxisFactory.getXYZAxes();
-		rootNode.addChild(axes);
 		rootNode.addChild(cameraNode);
-		rootNode.setAppearance(rootApp);
-
+		rootNode.addChild(axes);
 	}
 
 	public static void draggedPoint() {
@@ -178,7 +155,7 @@ public class PaintArea extends AbstractTool {
 		double[] offset = Rn.times(null, -5, dir);
 		double[] newPoint = Rn.add(null, foot, offset);
 
-		points.add(ToolUtility.worldToLocal(tc, newPoint));
+		addPolygonPoint(ToolUtility.worldToLocal(tc, newPoint));
 		updatePoints();
 		updateGeometry();
 
@@ -189,14 +166,14 @@ public class PaintArea extends AbstractTool {
 		if (points.size() > 0) {
 			pointSet.setVertexCount(points.size());
 			pointSet.setVertexCoordinates(points.toArray(new double[0][]));
-			double pdim[]=new double[points.size()];
+			double pdim[] = new double[points.size()];
 			Color clr[] = new Color[points.size()];
 			for (int i = 0; i < clr.length; i++) {
 				clr[i] = Color.BLUE;
-				pdim[i]=1.01;
+				pdim[i] = 1.01;
 			}
 			pointSet.setVertexColors(clr);
-			pointSet.setVertexAttribute(Attribute.RELATIVE_RADII,pdim);
+			pointSet.setVertexAttribute(Attribute.RELATIVE_RADII, pdim);
 			pointSet.update();
 		}
 	}
@@ -221,7 +198,7 @@ public class PaintArea extends AbstractTool {
 		}
 		if (n >= 2) {
 
-			model = new Fibra(dim);
+			model = new Fiber(dim);
 			int j = 0;
 			double[] tmp;
 			for (double t = 0; j < dim; t += 1.0 / (dim - 1), j++) {
@@ -260,12 +237,17 @@ public class PaintArea extends AbstractTool {
 	}
 
 	public void setNColors(int n) {
-		this.n = n;
+		DrawingArea.n = n;
 	}
 
-	public String getMatrixView(){
+	public String getMatrixView() {
 		return DefaultMatrixSupport.getSharedInstance().toString();
 	}
+
+	public SceneGraphComponent getRootNode() {
+		return rootNode;
+	}
+
 	public int getNumPoints() {
 		return dim;
 	}
@@ -281,16 +263,28 @@ public class PaintArea extends AbstractTool {
 	public double[][] getModelVertex() {
 		return model.getVertex();
 	}
-	
-	public  List<double[]> getPolygonPoints() {
-		return points;
+
+	public void addPolygonPoint(double[] point) {
+		points.add(point);
 	}
-	public  int getNPolygonPoints() {
+
+	public int getNPolygonPoints() {
 		return points.size();
 	}
-	
 
-	// algoritmo di Casteljau
+	public List<double[]> getPolygonPoints() {
+		return points;
+	}
+
+	public SceneGraphComponent getSpline() {
+		return spline;
+	}
+
+	public SceneGraphComponent getAxes() {
+		return axes;
+	}
+
+	// Casteljau Algorithm
 	private static double[] getCasteljauPoint(int r, int i, double t) {
 		if (r == 0)
 			return points.get(i);
@@ -317,5 +311,17 @@ public class PaintArea extends AbstractTool {
 
 	public void setMouseInScreen(boolean v) {
 		mouseInScreen = v;
+	}
+
+	public SceneGraphPath getCamPath() {
+		return camPath;
+	}
+
+	public String getConstraints() {
+		return constraints;
+	}
+
+	public void setConstraints(String constraints) {
+		this.constraints = constraints;
 	}
 }

@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 public class TracksReader {
 
 	private static boolean datatype = false; // false = BE true = LE
@@ -61,9 +63,10 @@ public class TracksReader {
 			}
 			br.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null,
+					"Can not find the file specified");
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null,"Unable to read file");
 		}
 
 		try {
@@ -77,8 +80,8 @@ public class TracksReader {
 			N = Math.round(inp.available() / 12);
 
 		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+			JOptionPane.showMessageDialog(null,"Unable to read file");
+				}
 	}
 
 	public static void readData() {
@@ -135,7 +138,8 @@ public class TracksReader {
 
 			inp.close();
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(null,"Unable to read file");
+			
 		}
 
 		formatTracks(k);

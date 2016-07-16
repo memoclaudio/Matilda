@@ -2,12 +2,6 @@ package editor;
 
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import de.jreality.jogl.JOGLViewer;
-import de.jreality.toolsystem.ToolSystem;
-
 public class ProvaResult {
 
 	public static void main(String[] args) {
@@ -76,10 +70,10 @@ public class ProvaResult {
 	};
 	
 	
-	Fibra f=new Fibra(vertices);
-	Fibra f2=new Fibra(vertices2);
+	Fiber f=new Fiber(vertices);
+	Fiber f2=new Fiber(vertices2);
 	
-	ArrayList<Fibra>fibre=new ArrayList<Fibra>();
+	ArrayList<Fiber>fibre=new ArrayList<Fiber>();
 	fibre.add(f);
 	fibre.add(f2);
 
@@ -88,7 +82,7 @@ public class ProvaResult {
 	
 	
 	
-	ResultPanel r=new ResultPanel(fibre);
+	OutputPanel r=new OutputPanel(fibre);
 	r.start();
 	
 		
