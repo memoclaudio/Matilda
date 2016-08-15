@@ -39,6 +39,8 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
+import de.jreality.ui.viewerapp.FileFilter;
+
 public class SettingsPanel extends JPanel {
 	private static String OS = System.getProperty("os.name").toLowerCase();
 	private static final long serialVersionUID = 1L;
@@ -84,6 +86,7 @@ public class SettingsPanel extends JPanel {
 		Image sogliaIcon = null;
 		Image saveModelIcon = null;
 		Image uploadModelIcon = null;
+		Image uploadDwi = null;
 		try {
 			resetIcon = ImageIO.read(new File("src/images/eraser2.png"));
 			nPointsIcon = ImageIO.read(new File("src/images/ellipsis-h.png"));
@@ -97,6 +100,7 @@ public class SettingsPanel extends JPanel {
 			sogliaIcon = ImageIO.read(new File("src/images/soglia.png"));
 			saveModelIcon = ImageIO.read(new File("src/images/save.png"));
 			uploadModelIcon = ImageIO.read(new File("src/images/upload.png"));
+			uploadDwi = ImageIO.read(new File("src/images/uploadDwi.png"));
 
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(null, "Error loading image");
@@ -236,6 +240,80 @@ public class SettingsPanel extends JPanel {
 			}
 		});
 		add(uploadTck);
+		
+		
+		
+		
+		newimg = uploadDwi.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+		newIcon = new ImageIcon(newimg);
+		JButton dwi = new JButton();
+		dwi.setIcon(newIcon);
+		dwi.setBorderPainted(false);
+		dwi.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		dwi.setContentAreaFilled(false);
+		dwi.setLocation((int)  ((0.1 * width) / 4) + 40,
+				(int) (height / 7) * 3 - 40);
+		dwi.setSize(new Dimension(30, 30));
+		dwi.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				File[] files=new File[3];
+				File dwi=null;
+				File bvecs=null;
+				File bvals=null;
+			
+				String path=null;
+				
+				JFileChooser chooser = new JFileChooser();
+				chooser.setMultiSelectionEnabled(true);
+			
+				int returnVal = chooser.showOpenDialog(null);
+				
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+				 {
+				
+				files=chooser.getSelectedFiles();
+				
+			
+				}
+				 
+				for(File f:files)
+				{
+					System.out.println("file scelti: "+f);
+			
+						
+						if(f.getName().equals("bvecs"))
+						{
+							bvecs=f;
+						}
+						else if(f.getName().equals("bvals"))
+						{
+							bvals=f;
+						}
+						else
+						{
+							dwi=f;
+						}
+						
+						path=f.getParent();
+					
+				}
+			
+				
+				System.out.println("bvecs: "+bvecs+" bvals: "+bvals+" dwi: "+dwi);
+				
+			
+			
+				}
+			
+			}
+		});
+		add(dwi);
+		
+		
+		
 
 		// Start button
 		newimg = startIcon.getScaledInstance(80, 80,
@@ -605,8 +683,8 @@ public class SettingsPanel extends JPanel {
 		vincoliButton.setBorder(null);
 		vincoliButton.setContentAreaFilled(false);
 		vincoliButton.setSize(30, 30);
-		vincoliButton.setLocation((int) ((0.1 * width) / 4) + 40,
-				(int) (height / 7) * 3 - 40);
+		vincoliButton.setLocation((int) ((0.1 * width) / 4) + 70,
+				(int) (height / 7) * 3+10 );
 		vincoliButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		vincoliButton.addActionListener(new ActionListener() {
 
@@ -759,6 +837,7 @@ public class SettingsPanel extends JPanel {
 		changeThreshold.setToolTipText("Change value of threshold");
 		saveModelButton.setToolTipText("Save model");
 		uploadModelButton.setToolTipText("Upload a model");
+		dwi.setToolTipText("Upload Dwi");
 
 	}
 
@@ -783,5 +862,4 @@ public class SettingsPanel extends JPanel {
 		g.setColor(new Color(220, 20, 60));
 		g.drawRect(50, 50, 145, 500);
 	}
-
 }
