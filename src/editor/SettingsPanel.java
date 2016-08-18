@@ -107,14 +107,12 @@ public class SettingsPanel extends JPanel {
 		}
 
 		// reset
-		Image newimg = resetIcon.getScaledInstance(30, 30,
-				java.awt.Image.SCALE_SMOOTH);
+		Image newimg = resetIcon.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
 		// scaled icon
 		ImageIcon newIcon = new ImageIcon(newimg);
 		JButton resetButton = new JButton();
 		resetButton.setIcon(newIcon);
-		resetButton.setLocation((int) ((0.1 * width) / 4) + 40,
-				(int) height / 7 - 25);
+		resetButton.setLocation((int) ((0.1 * width) / 4) + 40, (int) height / 7 - 25);
 		resetButton.setSize(new Dimension(30, 30));
 		resetButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		resetButton.setBorder(null);
@@ -130,8 +128,7 @@ public class SettingsPanel extends JPanel {
 		});
 		add(resetButton);
 
-		newimg = nPointsIcon.getScaledInstance(30, 30,
-				java.awt.Image.SCALE_SMOOTH);
+		newimg = nPointsIcon.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
 		newIcon = new ImageIcon(newimg);
 		JButton n = new JButton();
 		n.setIcon(newIcon);
@@ -139,8 +136,7 @@ public class SettingsPanel extends JPanel {
 		n.setContentAreaFilled(false);
 		n.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		n.setSize(30, 30);
-		n.setLocation((int) ((0.1 * width) / 4) + 40,
-				(int) (height / 7) * 2 - 40);
+		n.setLocation((int) ((0.1 * width) / 4) + 40, (int) (height / 7) * 2 - 40);
 		n.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -150,26 +146,21 @@ public class SettingsPanel extends JPanel {
 				textField.setSize(130, 50);
 				textField.setHorizontalAlignment(JTextField.CENTER);
 
-				int choice = JOptionPane.showConfirmDialog(f, textField,
-						"Number of points", JOptionPane.OK_CANCEL_OPTION);
+				int choice = JOptionPane.showConfirmDialog(f, textField, "Number of points",
+						JOptionPane.OK_CANCEL_OPTION);
 				if (choice == JOptionPane.OK_OPTION) {
 					try {
 						if (Integer.parseInt(textField.getText()) >= 0)
-							drawingArea.setNumPoints(Integer.parseInt(textField
-									.getText()));
+							drawingArea.setNumPoints(Integer.parseInt(textField.getText()));
 						else {
-							JOptionPane.showMessageDialog(null,
-									"Enter a positive number");
-							textField.setText(Integer.toString(drawingArea
-									.getNumPoints()));
+							JOptionPane.showMessageDialog(null, "Enter a positive number");
+							textField.setText(Integer.toString(drawingArea.getNumPoints()));
 						}
 
 					} catch (NumberFormatException exc) {
-						textField.setText(Integer.toString(drawingArea
-								.getNumPoints()));
+						textField.setText(Integer.toString(drawingArea.getNumPoints()));
 
-						JOptionPane.showMessageDialog(null,
-								"Enter a positive number");
+						JOptionPane.showMessageDialog(null, "Enter a positive number");
 					}
 
 				}
@@ -179,16 +170,14 @@ public class SettingsPanel extends JPanel {
 		add(n);
 
 		// Remove Last Point
-		newimg = rmPointIcon.getScaledInstance(30, 30,
-				java.awt.Image.SCALE_SMOOTH);
+		newimg = rmPointIcon.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
 		newIcon = new ImageIcon(newimg);
 		JButton rmvLast = new JButton();
 		rmvLast.setIcon(newIcon);
 		rmvLast.setBorder(null);
 		rmvLast.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		rmvLast.setContentAreaFilled(false);
-		rmvLast.setLocation((int) ((0.1 * width) / 4) * 3 + 40,
-				(int) height / 7 - 25);
+		rmvLast.setLocation((int) ((0.1 * width) / 4) * 3 + 40, (int) height / 7 - 25);
 		rmvLast.setSize(new Dimension(30, 30));
 		rmvLast.addActionListener(new ActionListener() {
 
@@ -209,16 +198,14 @@ public class SettingsPanel extends JPanel {
 		add(rmvLast);
 
 		// loadFile button
-		newimg = loadIcon
-				.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+		newimg = loadIcon.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
 		newIcon = new ImageIcon(newimg);
 		JButton uploadTck = new JButton();
 		uploadTck.setIcon(newIcon);
 		uploadTck.setBorder(null);
 		uploadTck.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		uploadTck.setContentAreaFilled(false);
-		uploadTck.setLocation((int) ((0.1 * width) / 4) * 3 + 40,
-				(int) (height / 7) * 3 - 40);
+		uploadTck.setLocation((int) ((0.1 * width) / 4) * 3 + 40, (int) (height / 7) * 3 - 40);
 		uploadTck.setSize(new Dimension(30, 30));
 		uploadTck.addActionListener(new ActionListener() {
 
@@ -226,24 +213,19 @@ public class SettingsPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser chooser = new JFileChooser();
 
-				FileNameExtensionFilter filter = new FileNameExtensionFilter(
-						"tck", "tck");
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("tck", "tck");
 				chooser.setFileFilter(filter);
 				int returnVal = chooser.showOpenDialog(null);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-					fibers = TracksReader.read(chooser.getSelectedFile()
-							.getPath());
+					fibers = TracksReader.read(chooser.getSelectedFile().getPath());
 
 				}
 
 			}
 		});
 		add(uploadTck);
-		
-		
-		
-		
+
 		newimg = uploadDwi.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
 		newIcon = new ImageIcon(newimg);
 		JButton dwi = new JButton();
@@ -251,81 +233,97 @@ public class SettingsPanel extends JPanel {
 		dwi.setBorderPainted(false);
 		dwi.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		dwi.setContentAreaFilled(false);
-		dwi.setLocation((int)  ((0.1 * width) / 4) + 40,
-				(int) (height / 7) * 3 - 40);
+		dwi.setLocation((int) ((0.1 * width) / 4) + 40, (int) (height / 7) * 3 - 40);
 		dwi.setSize(new Dimension(30, 30));
 		dwi.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				File[] files=new File[3];
-				File dwi=null;
-				File bvecs=null;
-				File bvals=null;
-			
-				String path=null;
-				
+
+				File dwi = null;
+				File bvecs = null;
+				File bvals = null;
+
+				String path = null;
+
+				/*
 				JFileChooser chooser = new JFileChooser();
-				chooser.setMultiSelectionEnabled(true);
-			
-				int returnVal = chooser.showOpenDialog(null);
-				
+
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("nii", "nii");
+				chooser.setFileFilter(filter);
+				int returnVal = chooser.showDialog(SettingsPanel.this, "Select dwi");
+
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-				 {
-				
-				files=chooser.getSelectedFiles();
-				
-			
+
+					dwi = chooser.getSelectedFile();
+
 				}
-				 
-				for(File f:files)
-				{
-					System.out.println("file scelti: "+f);
-			
-						
-						if(f.getName().equals("bvecs"))
-						{
-							bvecs=f;
-						}
-						else if(f.getName().equals("bvals"))
-						{
-							bvals=f;
-						}
-						else
-						{
-							dwi=f;
-						}
-						
-						path=f.getParent();
-					
+
+				chooser.setFileFilter(null);
+
+				returnVal = chooser.showDialog(SettingsPanel.this, "Select bvecs file");
+
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+					bvecs = chooser.getSelectedFile();
+
 				}
-			
-				
-				System.out.println("bvecs: "+bvecs+" bvals: "+bvals+" dwi: "+dwi);
-				
-			
-			
+
+				returnVal = chooser.showDialog(SettingsPanel.this, "Select bvals file");
+
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+					bvals = chooser.getSelectedFile();
+
 				}
-			
+
+				*/
+				//String[] s = new String[]{"/bin/sh","-c","./dwiScript.pl"};//dwi.getPath()+" "+bvecs.getPath()+" "+bvals.getAbsolutePath()};
+				//
+				//String[] s = new String[]{"/home/manu/mrtrix3/scripts/dwi2response", "tournier", "dwi.nii", "response.txt", "-fslgrad", "bvecs", "bvals", "-force"};
+				String[] s = new String[]{"make"};
+				//System.out.println(s[2]+" "+ s[3]+" "+ s[4]);
+				try {
+					ProcessBuilder pb = new ProcessBuilder(s);
+					//pb.directory(new File(System.getProperty("user.dir")));
+					System.out.println(pb.directory());
+					Process p = pb.start();
+
+					BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+					BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+					// read the output from the command
+					System.out.println("Here is the standard output of the command:\n");
+					String string = null;
+					while ((string = stdInput.readLine()) != null) {
+						System.out.println(string);
+					}
+
+					// read any errors from the attempted command
+					System.out.println("Here is the standard error of the command (if any):\n");
+					while ((string = stdError.readLine()) != null) {
+						System.out.println(string);
+					}
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
 			}
 		});
 		add(dwi);
-		
-		
-		
 
 		// Start button
-		newimg = startIcon.getScaledInstance(80, 80,
-				java.awt.Image.SCALE_SMOOTH);
+		newimg = startIcon.getScaledInstance(80, 80, java.awt.Image.SCALE_SMOOTH);
 		newIcon = new ImageIcon(newimg);
 		JButton start = new JButton();
 		start.setIcon(newIcon);
 		start.setBorder(null);
 		start.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		start.setContentAreaFilled(false);
-		start.setLocation((int) (0.2 * width) / 2 - 45,
-				(int) (height / 7) * 6 - 55);
+		start.setLocation((int) (0.2 * width) / 2 - 45, (int) (height / 7) * 6 - 55);
 		start.setSize(new Dimension(80, 80));
 		add(start);
 
@@ -336,12 +334,10 @@ public class SettingsPanel extends JPanel {
 					if (fibers != null) {
 						stop = false;
 						valueBar = 0;
-						JDialog caricamento = new JDialog(f,
-								ModalityType.APPLICATION_MODAL);
+						JDialog caricamento = new JDialog(f, ModalityType.APPLICATION_MODAL);
 						caricamento.setPreferredSize(new Dimension(400, 40));
 						caricamento.setResizable(false);
-						caricamento.setLocation(width / 2 - 200,
-								height / 2 - 20);
+						caricamento.setLocation(width / 2 - 200, height / 2 - 20);
 						caricamento.setTitle("Computing...");
 
 						JProgressBar pbar = new JProgressBar(0, 100);
@@ -370,10 +366,8 @@ public class SettingsPanel extends JPanel {
 							public void run() {
 								while (!stop) {
 
-									String model = Converter
-											.convertMatrixToString(drawingArea
-													.getModelVertex(),
-													drawingArea.getNumColors());
+									String model = Converter.convertMatrixToString(drawingArea.getModelVertex(),
+											drawingArea.getNumColors());
 									ArrayList<Fiber> fibersResult = null;
 									fibersResult = new ArrayList<Fiber>();
 									FileOutputStream sbedTmp = null;
@@ -381,22 +375,16 @@ public class SettingsPanel extends JPanel {
 
 									try {
 										for (int i = 0; i < fibers.length; i++) {
-											sbedTmp = new FileOutputStream(
-													"src/sbedTmp.txt");
-											scriviSbed = new PrintStream(
-													sbedTmp);
+											sbedTmp = new FileOutputStream("src/sbedTmp.txt");
+											scriviSbed = new PrintStream(sbedTmp);
 
 											if (stop)
 												break;
 
 											scriviSbed.println(model);
-											scriviSbed.println(Converter
-													.convertMatrixToString(
-															fibers[i],
-															drawingArea
-																	.getNumColors()));
-											scriviSbed.print(drawingArea
-													.getConstraints());
+											scriviSbed.println(Converter.convertMatrixToString(fibers[i],
+													drawingArea.getNumColors()));
+											scriviSbed.print(drawingArea.getConstraints());
 
 											String[] s = new String[3];
 											if (isUnix()) {
@@ -408,17 +396,14 @@ public class SettingsPanel extends JPanel {
 												s[1] = "/c";
 												s[2] = "type src\\sbedTmp.txt | c:src\\SBEDWin.exe";
 											}
-											Process p = Runtime.getRuntime()
-													.exec(s);
+											Process p = Runtime.getRuntime().exec(s);
 											BufferedReader in = new BufferedReader(
-													new InputStreamReader(p
-															.getInputStream()));
+													new InputStreamReader(p.getInputStream()));
 											String line = in.readLine();
 											if (line != null) {
 
 												if (Integer.parseInt(line) <= soglia) {
-													fibersResult.add(new Fiber(
-															fibers[i]));
+													fibersResult.add(new Fiber(fibers[i]));
 												}
 
 											}
@@ -428,13 +413,12 @@ public class SettingsPanel extends JPanel {
 												fetta += (int) (fibers.length * 0.02);
 
 												valueBar += 2;
-												SwingUtilities
-														.invokeLater(new Runnable() {
-															public void run() {
-																pbar.setValue(valueBar);
-																pbar.updateUI();
-															}
-														});
+												SwingUtilities.invokeLater(new Runnable() {
+													public void run() {
+														pbar.setValue(valueBar);
+														pbar.updateUI();
+													}
+												});
 
 											}
 
@@ -442,24 +426,20 @@ public class SettingsPanel extends JPanel {
 
 										if (scriviSbed != null)
 											scriviSbed.close();
-										File toDelete = new File(
-												"src/sbedTmp.txt");
+										File toDelete = new File("src/sbedTmp.txt");
 										if (toDelete.exists())
 											toDelete.delete();
 									} catch (IOException ex) {
-										JOptionPane.showMessageDialog(null,
-												"Error");
+										JOptionPane.showMessageDialog(null, "Error");
 									}
 									OutputPanel outputPanel;
 									caricamento.setVisible(false);
 									if (!stop) {
 										if (fibersResult.size() != 0) {
-											outputPanel = new OutputPanel(
-													fibersResult);
+											outputPanel = new OutputPanel(fibersResult);
 											outputPanel.start();
 										} else
-											JOptionPane.showMessageDialog(null,
-													"No result");
+											JOptionPane.showMessageDialog(null, "No result");
 									}
 
 									stop = true;
@@ -470,18 +450,15 @@ public class SettingsPanel extends JPanel {
 						caricamento.setVisible(true);
 
 					} else
-						JOptionPane.showMessageDialog(null,
-								"Upload a tractography to continue");
+						JOptionPane.showMessageDialog(null, "Upload a tractography to continue");
 
 				} else
-					JOptionPane.showMessageDialog(null,
-							"Draw or upload a model to continue");
+					JOptionPane.showMessageDialog(null, "Draw or upload a model to continue");
 
 			}
 		});
 
-		newimg = infoIcon
-				.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
+		newimg = infoIcon.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
 		newIcon = new ImageIcon(newimg);
 
 		JButton infoButton = new JButton();
@@ -490,8 +467,7 @@ public class SettingsPanel extends JPanel {
 		infoButton.setContentAreaFilled(false);
 		infoButton.setSize(15, 15);
 		infoButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		infoButton.setLocation((int) ((0.1 * width) / 4) * 2 + 100,
-				(int) (height / 7) * 6 - 10);
+		infoButton.setLocation((int) ((0.1 * width) / 4) * 2 + 100, (int) (height / 7) * 6 - 10);
 		infoButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -501,16 +477,14 @@ public class SettingsPanel extends JPanel {
 				int widthPanel = 500;
 				frame.setPreferredSize(new Dimension(widthPanel, heightPanel));
 				frame.validate();
-				frame.setLocation(width / 2 - widthPanel / 2, height / 2
-						- heightPanel / 2);
+				frame.setLocation(width / 2 - widthPanel / 2, height / 2 - heightPanel / 2);
 				frame.setLayout(null);
 				frame.getContentPane().setBackground(new Color(32, 32, 32));
 
 				JLabel title = new JLabel("Three steps:");
 				JLabel instruction1 = new JLabel("a- Draw a model");
 				JLabel instruction2 = new JLabel("b- Upload a file.tck");
-				JLabel instruction3 = new JLabel(
-						"c- Define constraints (optional)");
+				JLabel instruction3 = new JLabel("c- Define constraints (optional)");
 				JLabel start = new JLabel("...and start");
 
 				title.setForeground(new Color(220, 20, 60));
@@ -553,8 +527,7 @@ public class SettingsPanel extends JPanel {
 		});
 		add(infoButton);
 
-		newimg = sogliaIcon.getScaledInstance(30, 30,
-				java.awt.Image.SCALE_SMOOTH);
+		newimg = sogliaIcon.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
 		newIcon = new ImageIcon(newimg);
 
 		JButton changeThreshold = new JButton();
@@ -563,8 +536,7 @@ public class SettingsPanel extends JPanel {
 		changeThreshold.setContentAreaFilled(false);
 		changeThreshold.setSize(30, 30);
 		changeThreshold.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		changeThreshold.setLocation((int) ((0.1 * width) / 4) + 40,
-				(int) (height / 7) * 4 - 40);
+		changeThreshold.setLocation((int) ((0.1 * width) / 4) + 40, (int) (height / 7) * 4 - 40);
 
 		changeThreshold.addActionListener(new ActionListener() {
 			@Override
@@ -574,23 +546,21 @@ public class SettingsPanel extends JPanel {
 				textField.setSize(130, 50);
 				textField.setHorizontalAlignment(JTextField.CENTER);
 
-				int choice = JOptionPane.showConfirmDialog(f, textField,
-						"Value of threshold", JOptionPane.OK_CANCEL_OPTION);
+				int choice = JOptionPane.showConfirmDialog(f, textField, "Value of threshold",
+						JOptionPane.OK_CANCEL_OPTION);
 				if (choice == JOptionPane.OK_OPTION) {
 					try {
 						if (Integer.parseInt(textField.getText()) >= 0)
 							soglia = Integer.parseInt(textField.getText());
 						else {
-							JOptionPane.showMessageDialog(null,
-									"Enter a positive number");
+							JOptionPane.showMessageDialog(null, "Enter a positive number");
 							textField.setText(Integer.toString(soglia));
 						}
 
 					} catch (NumberFormatException exc) {
 						textField.setText(Integer.toString(soglia));
 
-						JOptionPane.showMessageDialog(null,
-								"Enter a positive number");
+						JOptionPane.showMessageDialog(null, "Enter a positive number");
 					}
 
 				}
@@ -599,8 +569,7 @@ public class SettingsPanel extends JPanel {
 		});
 		add(changeThreshold);
 
-		newimg = resetCamIcon.getScaledInstance(30, 30,
-				java.awt.Image.SCALE_SMOOTH);
+		newimg = resetCamIcon.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
 		newIcon = new ImageIcon(newimg);
 
 		JButton resetCamera = new JButton();
@@ -609,8 +578,7 @@ public class SettingsPanel extends JPanel {
 		resetCamera.setContentAreaFilled(false);
 		resetCamera.setSize(30, 30);
 		resetCamera.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		resetCamera.setLocation((int) ((0.1 * width) / 4) * 3 + 40,
-				(int) (height / 7) * 4 - 40);
+		resetCamera.setLocation((int) ((0.1 * width) / 4) * 3 + 40, (int) (height / 7) * 4 - 40);
 
 		resetCamera.addActionListener(new ActionListener() {
 
@@ -621,8 +589,7 @@ public class SettingsPanel extends JPanel {
 		});
 		add(resetCamera);
 
-		newimg = nColorsIcon.getScaledInstance(30, 30,
-				java.awt.Image.SCALE_SMOOTH);
+		newimg = nColorsIcon.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
 		newIcon = new ImageIcon(newimg);
 		JButton nColors = new JButton();
 		nColors.setIcon(newIcon);
@@ -630,43 +597,36 @@ public class SettingsPanel extends JPanel {
 		nColors.setContentAreaFilled(false);
 		nColors.setSize(30, 30);
 		nColors.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		nColors.setLocation((int) ((0.1 * width) / 4) * 3 + 40,
-				(int) (height / 7) * 2 - 40);
+		nColors.setLocation((int) ((0.1 * width) / 4) * 3 + 40, (int) (height / 7) * 2 - 40);
 
 		nColors.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JTextField nColorsField = new JTextField(20);
-				nColorsField.setText(Integer.toString(drawingArea
-						.getNumColors()));
+				nColorsField.setText(Integer.toString(drawingArea.getNumColors()));
 				nColorsField.setSize(130, 50);
 				nColorsField.setHorizontalAlignment(JTextField.CENTER);
 
-				int choice = JOptionPane.showConfirmDialog(f, nColorsField,
-						"Number of colors", JOptionPane.OK_CANCEL_OPTION);
+				int choice = JOptionPane.showConfirmDialog(f, nColorsField, "Number of colors",
+						JOptionPane.OK_CANCEL_OPTION);
 
 				if (choice == JOptionPane.OK_OPTION) {
 
 					try {
 						if (Integer.parseInt(nColorsField.getText()) >= 0
 								&& Integer.parseInt(nColorsField.getText()) < 10) {
-							drawingArea.setNColors(Integer
-									.parseInt(nColorsField.getText()));
+							drawingArea.setNColors(Integer.parseInt(nColorsField.getText()));
 
 						} else {
-							JOptionPane.showMessageDialog(null,
-									"Enter a number from 0 to 9");
-							nColorsField.setText(Integer.toString(drawingArea
-									.getNumColors()));
+							JOptionPane.showMessageDialog(null, "Enter a number from 0 to 9");
+							nColorsField.setText(Integer.toString(drawingArea.getNumColors()));
 						}
 
 					} catch (NumberFormatException exc) {
-						nColorsField.setText(Integer.toString(drawingArea
-								.getNumColors()));
+						nColorsField.setText(Integer.toString(drawingArea.getNumColors()));
 
-						JOptionPane.showMessageDialog(null,
-								"Enter a number from 0 to 9");
+						JOptionPane.showMessageDialog(null, "Enter a number from 0 to 9");
 					}
 				}
 
@@ -675,39 +635,34 @@ public class SettingsPanel extends JPanel {
 
 		add(nColors);
 
-		newimg = vincoliIcon.getScaledInstance(30, 30,
-				java.awt.Image.SCALE_SMOOTH);
+		newimg = vincoliIcon.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
 		newIcon = new ImageIcon(newimg);
 		JButton vincoliButton = new JButton();
 		vincoliButton.setIcon(newIcon);
 		vincoliButton.setBorder(null);
 		vincoliButton.setContentAreaFilled(false);
 		vincoliButton.setSize(30, 30);
-		vincoliButton.setLocation((int) ((0.1 * width) / 4) + 70,
-				(int) (height / 7) * 3+10 );
+		vincoliButton.setLocation((int) ((0.1 * width) / 4) + 70, (int) (height / 7) * 3 + 10);
 		vincoliButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		vincoliButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new ConstraintsPanel(drawingArea.getNumColors(), fibers, width,
-						height, f, drawingArea, model);
+				new ConstraintsPanel(drawingArea.getNumColors(), fibers, width, height, f, drawingArea, model);
 
 			}
 		});
 
 		add(vincoliButton);
 
-		newimg = saveModelIcon.getScaledInstance(30, 30,
-				java.awt.Image.SCALE_SMOOTH);
+		newimg = saveModelIcon.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
 		newIcon = new ImageIcon(newimg);
 		JButton saveModelButton = new JButton();
 		saveModelButton.setIcon(newIcon);
 		saveModelButton.setBorder(null);
 		saveModelButton.setContentAreaFilled(false);
 		saveModelButton.setSize(30, 30);
-		saveModelButton.setLocation((int) ((0.1 * width) / 4) + 40,
-				(int) (height / 7) * 5 - 40);
+		saveModelButton.setLocation((int) ((0.1 * width) / 4) + 40, (int) (height / 7) * 5 - 40);
 		saveModelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		saveModelButton.addActionListener(new ActionListener() {
 
@@ -715,61 +670,51 @@ public class SettingsPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser chooser = new JFileChooser();
 				if (drawingArea.getNPolygonPoints() > 0) {
-					FileNameExtensionFilter filter = new FileNameExtensionFilter(
-							"txt", "txt");
+					FileNameExtensionFilter filter = new FileNameExtensionFilter("txt", "txt");
 					chooser.setFileFilter(filter);
 					chooser.setCurrentDirectory(new File("./"));
 					int actionDialog = chooser.showSaveDialog(f);
 					if (actionDialog == JFileChooser.APPROVE_OPTION) {
-						File fileName = new File(chooser.getSelectedFile()
-								+ ".txt");
+						File fileName = new File(chooser.getSelectedFile() + ".txt");
 						if (fileName.exists()) {
-							actionDialog = JOptionPane.showConfirmDialog(f,
-									"Replace existing file?");
+							actionDialog = JOptionPane.showConfirmDialog(f, "Replace existing file?");
 							if (actionDialog == JOptionPane.NO_OPTION)
 								return;
 
 						}
 						BufferedWriter outFile = null;
 						try {
-							outFile = new BufferedWriter(new FileWriter(
-									fileName));
-							Iterator<double[]> it = drawingArea
-									.getPolygonPoints().iterator();
+							outFile = new BufferedWriter(new FileWriter(fileName));
+							Iterator<double[]> it = drawingArea.getPolygonPoints().iterator();
 							while (it.hasNext()) {
 								double[] vertice = it.next();
-								outFile.write(vertice[0] + " " + vertice[1]
-										+ " " + vertice[2] + "\n");
+								outFile.write(vertice[0] + " " + vertice[1] + " " + vertice[2] + "\n");
 							}
 
 							outFile.flush();
 							outFile.close();
 
 						} catch (IOException e1) {
-							JOptionPane.showMessageDialog(null,
-									"Unable to save model");
+							JOptionPane.showMessageDialog(null, "Unable to save model");
 						}
 
 					}
 
 				} else
-					JOptionPane.showMessageDialog(null,
-							"Unable to save: empty model");
+					JOptionPane.showMessageDialog(null, "Unable to save: empty model");
 			}
 		});
 
 		add(saveModelButton);
 
-		newimg = uploadModelIcon.getScaledInstance(30, 30,
-				java.awt.Image.SCALE_SMOOTH);
+		newimg = uploadModelIcon.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
 		newIcon = new ImageIcon(newimg);
 		JButton uploadModelButton = new JButton();
 		uploadModelButton.setIcon(newIcon);
 		uploadModelButton.setBorder(null);
 		uploadModelButton.setContentAreaFilled(false);
 		uploadModelButton.setSize(30, 30);
-		uploadModelButton.setLocation((int) ((0.1 * width) / 4) * 3 + 40,
-				(int) (height / 7) * 5 - 40);
+		uploadModelButton.setLocation((int) ((0.1 * width) / 4) * 3 + 40, (int) (height / 7) * 5 - 40);
 		uploadModelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		uploadModelButton.addActionListener(new ActionListener() {
 
@@ -777,8 +722,7 @@ public class SettingsPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser chooser = new JFileChooser();
 
-				FileNameExtensionFilter filter = new FileNameExtensionFilter(
-						"txt", "txt");
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("txt", "txt");
 				chooser.setFileFilter(filter);
 				int returnVal = chooser.showOpenDialog(null);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -788,8 +732,7 @@ public class SettingsPanel extends JPanel {
 
 						String sCurrentLine;
 
-						br = new BufferedReader(new FileReader(chooser
-								.getSelectedFile().getPath()));
+						br = new BufferedReader(new FileReader(chooser.getSelectedFile().getPath()));
 						DrawingArea.clear();
 						while ((sCurrentLine = br.readLine()) != null) {
 							String[] var = sCurrentLine.split(" ");
@@ -806,15 +749,13 @@ public class SettingsPanel extends JPanel {
 						DrawingArea.updateGeometry();
 
 					} catch (IOException e1) {
-						JOptionPane.showMessageDialog(null,
-								"Failed to load the model");
+						JOptionPane.showMessageDialog(null, "Failed to load the model");
 					} finally {
 						try {
 							if (br != null)
 								br.close();
 						} catch (IOException ex) {
-							JOptionPane.showMessageDialog(null,
-									"Error closing file");
+							JOptionPane.showMessageDialog(null, "Error closing file");
 						}
 					}
 
