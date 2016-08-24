@@ -39,8 +39,6 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
-import de.jreality.ui.viewerapp.FileFilter;
-
 public class SettingsPanel extends JPanel {
 	private static String OS = System.getProperty("os.name").toLowerCase();
 	private static final long serialVersionUID = 1L;
@@ -49,6 +47,7 @@ public class SettingsPanel extends JPanel {
 	private int height;
 	private double[][][] fibers;
 
+	private int numberOfTracks = 100;
 	private int soglia = 30;
 	private int valueBar = 0;
 	private int fetta;
@@ -239,15 +238,12 @@ public class SettingsPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
 
 				File dwi = null;
 				File bvecs = null;
 				File bvals = null;
 
-				String path = null;
 
-				/*
 				JFileChooser chooser = new JFileChooser();
 
 				FileNameExtensionFilter filter = new FileNameExtensionFilter("nii", "nii");
@@ -278,15 +274,54 @@ public class SettingsPanel extends JPanel {
 
 				}
 
-				*/
-				//String[] s = new String[]{"/bin/sh","-c","./dwiScript.pl"};//dwi.getPath()+" "+bvecs.getPath()+" "+bvals.getAbsolutePath()};
-				//
-				//String[] s = new String[]{"/home/manu/mrtrix3/scripts/dwi2response", "tournier", "dwi.nii", "response.txt", "-fslgrad", "bvecs", "bvals", "-force"};
-				String[] s = new String[]{"make"};
-				//System.out.println(s[2]+" "+ s[3]+" "+ s[4]);
+				JTextField textField = new JTextField(20);
+				textField.setText(Integer.toString(numberOfTracks));
+				textField.setSize(130, 50);
+				textField.setHorizontalAlignment(JTextField.CENTER);
+
+				int choice = JOptionPane.showConfirmDialog(f, textField, "number of tracks",
+						JOptionPane.OK_CANCEL_OPTION);
+				if (choice == JOptionPane.OK_OPTION) {
+					try {
+						if (Integer.parseInt(textField.getText()) >= 0) {
+							numberOfTracks = Integer.parseInt(textField.getText());
+							System.out.println("number:" + numberOfTracks);
+						} else {
+							JOptionPane.showMessageDialog(null, "Enter a positive number");
+							textField.setText(Integer.toString(numberOfTracks));
+						}
+
+					} catch (NumberFormatException exc) {
+						textField.setText(Integer.toString(numberOfTracks));
+
+						JOptionPane.showMessageDialog(null, "Enter a positive number");
+					}
+
+				}
+				
+				
+				
+				String file="file.tck";
+				JTextField text = new JTextField(20);
+				textField.setText(file);
+				textField.setSize(130, 50);
+				textField.setHorizontalAlignment(JTextField.CENTER);
+
+				choice = JOptionPane.showConfirmDialog(f, text, "name file tck",
+						JOptionPane.OK_CANCEL_OPTION);
+				if (choice == JOptionPane.OK_OPTION) {
+					file=text.getText();
+				}
+				
+				
+				
+
+				String[] s = new String[] { "./dwiScript.pl", dwi.getPath(), bvecs.getPath(), bvals.getPath(),
+						Integer.toString(numberOfTracks),file };
+
 				try {
-					ProcessBuilder pb = new ProcessBuilder(s);
-					//pb.directory(new File(System.getProperty("user.dir")));
+					ProcessBuilder pb = new ProcessBuilder(s); //
+					pb.directory(new File(System.getProperty("user.dir")));
 					System.out.println(pb.directory());
 					Process p = pb.start();
 
@@ -297,20 +332,26 @@ public class SettingsPanel extends JPanel {
 					// read the output from the command
 					System.out.println("Here is the standard output of the command:\n");
 					String string = null;
-					while ((string = stdInput.readLine()) != null) {
-						System.out.println(string);
-					}
 
 					// read any errors from the attempted command
 					System.out.println("Here is the standard error of the command (if any):\n");
 					while ((string = stdError.readLine()) != null) {
 						System.out.println(string);
 					}
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
+
+					// read the output from the command
+					System.out.println("Here is the standard output of the command:\n");
+
+					while ((string = stdInput.readLine()) != null) {
+						System.out.println(string);
+					}
+
+				} catch (IOException e1) { // TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
+				fibers=TracksReader.read("output_tck/"+file+".tck");
+				
 			}
 		});
 		add(dwi);

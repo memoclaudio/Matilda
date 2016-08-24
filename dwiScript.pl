@@ -1,17 +1,25 @@
 #!/usr/bin/perl
 
-print "$ARGV[0]";
-$mrtrixFolder=$ARGV[0];
+$dwiFile=$ARGV[0];
+$bvecsFile=$ARGV[1];
+$bvalsFile=$ARGV[2];
+$numberOfTracks=$ARGV[3];
+$fileTck=$ARGV[4];
+$path="output_tck";
 
 qx(
-/home/manu/mrtrix3/release/bin/dwi2mask dwi.nii mask.nii -fslgrad bvecs bvals -force
+dwi2mask $dwiFile $path/mask.nii -fslgrad $bvecsFile $bvalsFile
+echo dwi2maskComplete
+dwi2response tournier $dwiFile $path/response.txt -fslgrad $bvecsFile $bvalsFile
 
-/home/manu/mrtrix3/scripts/dwi2response tournier dwi.nii response.txt -fslgrad bvecs bvals -force
+dwi2fod csd $dwiFile $path/response.txt $path/fod.nii -mask $path/mask.nii -fslgrad $bvecsFile $bvalsFile 
 
-/home/manu/mrtrix3/release/bin/dwi2fod csd dwi.nii response.txt fod.nii -mask mask.nii -fslgrad bvecs bvals -force
+tckgen $path/fod.nii $path/$fileTck.tck -seed_image $path/mask.nii -mask $path/mask.nii -number $numberOfTracks
 
-/home/manu/mrtrix3/release/bin/tckgen fod.nii file.tck -seed_image mask.nii -mask mask.nii -number 100 -force
+unlink $path/fod.nii
+unlink $path/mask.nii
+unlink $path/response.txt
 
-/home/manu/mrtrix3/release/bin/mrview dwi.nii -tractography.load file.tck
+mrview $dwiFile -tractography.load $path/$fileTck.tck
 )
 
