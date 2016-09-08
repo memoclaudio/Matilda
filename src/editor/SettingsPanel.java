@@ -234,126 +234,15 @@ public class SettingsPanel extends JPanel {
 		dwi.setContentAreaFilled(false);
 		dwi.setLocation((int) ((0.1 * width) / 4) + 40, (int) (height / 7) * 3 - 40);
 		dwi.setSize(new Dimension(30, 30));
+		SettingsPanel settingsPanel=this;
 		dwi.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				File dwi = null;
-				File bvecs = null;
-				File bvals = null;
-
-
-				JFileChooser chooser = new JFileChooser();
-
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("nii", "nii");
-				chooser.setFileFilter(filter);
-				int returnVal = chooser.showDialog(SettingsPanel.this, "Select dwi");
-
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-					dwi = chooser.getSelectedFile();
-
-				}
-
-				chooser.setFileFilter(null);
-
-				returnVal = chooser.showDialog(SettingsPanel.this, "Select bvecs file");
-
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-					bvecs = chooser.getSelectedFile();
-
-				}
-
-				returnVal = chooser.showDialog(SettingsPanel.this, "Select bvals file");
-
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-					bvals = chooser.getSelectedFile();
-
-				}
-
-				JTextField textField = new JTextField(20);
-				textField.setText(Integer.toString(numberOfTracks));
-				textField.setSize(130, 50);
-				textField.setHorizontalAlignment(JTextField.CENTER);
-
-				int choice = JOptionPane.showConfirmDialog(f, textField, "number of tracks",
-						JOptionPane.OK_CANCEL_OPTION);
-				if (choice == JOptionPane.OK_OPTION) {
-					try {
-						if (Integer.parseInt(textField.getText()) >= 0) {
-							numberOfTracks = Integer.parseInt(textField.getText());
-							System.out.println("number:" + numberOfTracks);
-						} else {
-							JOptionPane.showMessageDialog(null, "Enter a positive number");
-							textField.setText(Integer.toString(numberOfTracks));
-						}
-
-					} catch (NumberFormatException exc) {
-						textField.setText(Integer.toString(numberOfTracks));
-
-						JOptionPane.showMessageDialog(null, "Enter a positive number");
-					}
-
-				}
-				
-				
-				
-				String file="file.tck";
-				JTextField text = new JTextField(20);
-				textField.setText(file);
-				textField.setSize(130, 50);
-				textField.setHorizontalAlignment(JTextField.CENTER);
-
-				choice = JOptionPane.showConfirmDialog(f, text, "name file tck",
-						JOptionPane.OK_CANCEL_OPTION);
-				if (choice == JOptionPane.OK_OPTION) {
-					file=text.getText();
-				}
-				
-				
-				
-
-				String[] s = new String[] { "./dwiScript.pl", dwi.getPath(), bvecs.getPath(), bvals.getPath(),
-						Integer.toString(numberOfTracks),file };
-
-				try {
-					ProcessBuilder pb = new ProcessBuilder(s); //
-					pb.directory(new File(System.getProperty("user.dir")));
-					System.out.println(pb.directory());
-					Process p = pb.start();
-
-					BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-					BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
-					// read the output from the command
-					System.out.println("Here is the standard output of the command:\n");
-					String string = null;
-
-					// read any errors from the attempted command
-					System.out.println("Here is the standard error of the command (if any):\n");
-					while ((string = stdError.readLine()) != null) {
-						System.out.println(string);
-					}
-
-					// read the output from the command
-					System.out.println("Here is the standard output of the command:\n");
-
-					while ((string = stdInput.readLine()) != null) {
-						System.out.println(string);
-					}
-
-				} catch (IOException e1) { // TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-				fibers=TracksReader.read("output_tck/"+file+".tck");
-				
-			}
-		});
+				DwiToTckPanel p = new DwiToTckPanel(f, drawingArea, width, height,settingsPanel);
+	
+		}});
 		add(dwi);
 
 		// Start button
@@ -371,6 +260,9 @@ public class SettingsPanel extends JPanel {
 		start.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+
+				
 				if (!drawingArea.emptyModel()) {
 					if (fibers != null) {
 						stop = false;
@@ -407,6 +299,8 @@ public class SettingsPanel extends JPanel {
 							public void run() {
 								while (!stop) {
 
+									
+									
 									String model = Converter.convertMatrixToString(drawingArea.getModelVertex(),
 											drawingArea.getNumColors());
 									ArrayList<Fiber> fibersResult = null;
@@ -477,7 +371,10 @@ public class SettingsPanel extends JPanel {
 									caricamento.setVisible(false);
 									if (!stop) {
 										if (fibersResult.size() != 0) {
+											
+										
 											outputPanel = new OutputPanel(fibersResult);
+											
 											outputPanel.start();
 										} else
 											JOptionPane.showMessageDialog(null, "No result");
@@ -844,4 +741,13 @@ public class SettingsPanel extends JPanel {
 		g.setColor(new Color(220, 20, 60));
 		g.drawRect(50, 50, 145, 500);
 	}
+
+	public void setFibers(double[][][] fibers) {
+		this.fibers = fibers;
+	}
+
+	public double[][][] getFibers() {
+		return fibers;
+	}
+
 }

@@ -5,11 +5,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
-
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
+import javax.swing.filechooser.FileNameExtensionFilter;
 import de.jreality.geometry.IndexedLineSetFactory;
 import de.jreality.jogl.JOGLViewer;
 import de.jreality.math.MatrixBuilder;
@@ -37,9 +39,9 @@ public class OutputPanel extends Thread implements KeyListener {
 	int yCamPosition = 0;
 	int zCamPosition = 15;
 	int step = 2;
-
+private ArrayList<Fiber>fibre;
 	public OutputPanel(ArrayList<Fiber> fibre) {
-
+		this.fibre=fibre;
 		// INPUT
 		cmp = new SceneGraphComponent();
 		Appearance a = new Appearance();
@@ -88,9 +90,7 @@ public class OutputPanel extends Thread implements KeyListener {
 		Light dl = new DirectionalLight();
 		lightNode.setLight(dl);
 		camera = new Camera();
-		MatrixBuilder.euclidean()
-				.translate(xCamPosition, yCamPosition, zCamPosition)
-				.assignTo(cameraNode);
+		MatrixBuilder.euclidean().translate(xCamPosition, yCamPosition, zCamPosition).assignTo(cameraNode);
 		Appearance rootApp = new Appearance();
 		rootApp.setAttribute(CommonAttributes.BACKGROUND_COLOR, Color.WHITE);
 		rootNode.setAppearance(rootApp);
@@ -115,8 +115,7 @@ public class OutputPanel extends Thread implements KeyListener {
 		JFrame frame = new JFrame();
 
 		frame.setSize(widthFrame, heightFrame);
-		frame.setLocation(width / 2 - widthFrame / 2, height / 2 - heightFrame
-				/ 2);
+		frame.setLocation(width / 2 - widthFrame / 2, height / 2 - heightFrame / 2);
 
 		frame.validate();
 
@@ -140,6 +139,31 @@ public class OutputPanel extends Thread implements KeyListener {
 		});
 
 		frame.setVisible(true);
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				if (JOptionPane.showConfirmDialog(frame, "Do you want to save tck?", "Save tck to file",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+					JFileChooser chooser = new JFileChooser();
+					FileNameExtensionFilter filter = new FileNameExtensionFilter("tck", "tck");
+					chooser.setFileFilter(filter);
+					chooser.setCurrentDirectory(new File("./"));
+					int actionDialog = chooser.showSaveDialog(frame);
+					if (actionDialog == JFileChooser.APPROVE_OPTION) {
+						File fileName = new File(chooser.getSelectedFile() + ".tck");
+						if (fileName.exists()) {
+							actionDialog = JOptionPane.showConfirmDialog(frame, "Replace existing file?");
+							if (actionDialog == JOptionPane.NO_OPTION)
+								return;
+
+						}
+
+						new TckWriter().writeToFile(fileName, fibre);
+					}
+
+				}
+			}
+		});
 
 		while (!stopRequested) {
 			viewer.render();
@@ -147,7 +171,7 @@ public class OutputPanel extends Thread implements KeyListener {
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {
-				
+
 			}
 		}
 
@@ -171,9 +195,7 @@ public class OutputPanel extends Thread implements KeyListener {
 
 		}
 
-		MatrixBuilder.euclidean()
-				.translate(xCamPosition, yCamPosition, zCamPosition)
-				.assignTo(cameraNode);
+		MatrixBuilder.euclidean().translate(xCamPosition, yCamPosition, zCamPosition).assignTo(cameraNode);
 
 	}
 
