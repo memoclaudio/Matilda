@@ -86,6 +86,7 @@ public class SettingsPanel extends JPanel {
 		Image saveModelIcon = null;
 		Image uploadModelIcon = null;
 		Image uploadDwi = null;
+		Image partitionIcon=null;
 		try {
 			resetIcon = ImageIO.read(new File("src/images/eraser2.png"));
 			nPointsIcon = ImageIO.read(new File("src/images/ellipsis-h.png"));
@@ -100,6 +101,7 @@ public class SettingsPanel extends JPanel {
 			saveModelIcon = ImageIO.read(new File("src/images/save.png"));
 			uploadModelIcon = ImageIO.read(new File("src/images/upload.png"));
 			uploadDwi = ImageIO.read(new File("src/images/uploadDwi.png"));
+			partitionIcon=ImageIO.read(new File("src/images/partition.png"));
 
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(null, "Error loading image");
@@ -135,7 +137,7 @@ public class SettingsPanel extends JPanel {
 		n.setContentAreaFilled(false);
 		n.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		n.setSize(30, 30);
-		n.setLocation((int) ((0.1 * width) / 4) + 40, (int) (height / 7) * 2 - 40);
+		n.setLocation((int) ((0.1 * width) / 4) + 40, (int) (height / 7) * 2 - 50);
 		n.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -204,7 +206,7 @@ public class SettingsPanel extends JPanel {
 		uploadTck.setBorder(null);
 		uploadTck.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		uploadTck.setContentAreaFilled(false);
-		uploadTck.setLocation((int) ((0.1 * width) / 4) * 3 + 40, (int) (height / 7) * 3 - 40);
+		uploadTck.setLocation((int) ((0.1 * width) / 4) * 3 + 40, (int) (height / 7) * 3 - 70);
 		uploadTck.setSize(new Dimension(30, 30));
 		uploadTck.addActionListener(new ActionListener() {
 
@@ -232,7 +234,7 @@ public class SettingsPanel extends JPanel {
 		dwi.setBorderPainted(false);
 		dwi.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		dwi.setContentAreaFilled(false);
-		dwi.setLocation((int) ((0.1 * width) / 4) + 40, (int) (height / 7) * 3 - 40);
+		dwi.setLocation((int) ((0.1 * width) / 4) + 40, (int) (height / 7) * 3 - 70);
 		dwi.setSize(new Dimension(30, 30));
 		SettingsPanel settingsPanel=this;
 		dwi.addActionListener(new ActionListener() {
@@ -240,10 +242,36 @@ public class SettingsPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				DwiToTckPanel p = new DwiToTckPanel(f, drawingArea, width, height,settingsPanel);
+				new DwiToTckPanel(f, drawingArea, width, height,settingsPanel);
 	
 		}});
 		add(dwi);
+		
+		
+		
+		// reset
+				 newimg = partitionIcon.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+				// scaled icon
+				 newIcon = new ImageIcon(newimg);
+				JButton partitionButton = new JButton();
+				partitionButton.setIcon(newIcon);
+				partitionButton.setLocation((int) ((0.1 * width) / 4) * 3 + 40, (int) (height / 7) * 3 + 10);
+				partitionButton.setSize(new Dimension(30, 30));
+				partitionButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				partitionButton.setBorder(null);
+				partitionButton.setContentAreaFilled(false);
+				partitionButton.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new QuickBundlesPanel(f, drawingArea, width, height,settingsPanel);
+						
+
+					}
+				});
+				add(partitionButton);
+		
+		
 
 		// Start button
 		newimg = startIcon.getScaledInstance(80, 80, java.awt.Image.SCALE_SMOOTH);
@@ -474,7 +502,7 @@ public class SettingsPanel extends JPanel {
 		changeThreshold.setContentAreaFilled(false);
 		changeThreshold.setSize(30, 30);
 		changeThreshold.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		changeThreshold.setLocation((int) ((0.1 * width) / 4) + 40, (int) (height / 7) * 4 - 40);
+		changeThreshold.setLocation((int) ((0.1 * width) / 4) + 40, (int) (height / 7) * 4 - 20);
 
 		changeThreshold.addActionListener(new ActionListener() {
 			@Override
@@ -516,7 +544,7 @@ public class SettingsPanel extends JPanel {
 		resetCamera.setContentAreaFilled(false);
 		resetCamera.setSize(30, 30);
 		resetCamera.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		resetCamera.setLocation((int) ((0.1 * width) / 4) * 3 + 40, (int) (height / 7) * 4 - 40);
+		resetCamera.setLocation((int) ((0.1 * width) / 4) * 3 + 40, (int) (height / 7) * 4 - 20);
 
 		resetCamera.addActionListener(new ActionListener() {
 
@@ -535,7 +563,7 @@ public class SettingsPanel extends JPanel {
 		nColors.setContentAreaFilled(false);
 		nColors.setSize(30, 30);
 		nColors.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		nColors.setLocation((int) ((0.1 * width) / 4) * 3 + 40, (int) (height / 7) * 2 - 40);
+		nColors.setLocation((int) ((0.1 * width) / 4) * 3 + 40, (int) (height / 7) * 2 - 50);
 
 		nColors.addActionListener(new ActionListener() {
 
@@ -580,7 +608,7 @@ public class SettingsPanel extends JPanel {
 		vincoliButton.setBorder(null);
 		vincoliButton.setContentAreaFilled(false);
 		vincoliButton.setSize(30, 30);
-		vincoliButton.setLocation((int) ((0.1 * width) / 4) + 70, (int) (height / 7) * 3 + 10);
+		vincoliButton.setLocation((int) ((0.1 * width) / 4) + 40, (int) (height / 7) * 3 + 10);
 		vincoliButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		vincoliButton.addActionListener(new ActionListener() {
 

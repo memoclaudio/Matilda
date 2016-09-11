@@ -1,14 +1,10 @@
 package editor;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Image;
-
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,54 +15,46 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import jdk.nashorn.internal.runtime.regexp.joni.ast.CClassNode.CCStateArg;
-
-public class DwiToTckPanel {
+public class QuickBundlesPanel {
 
 	private JDialog dialog;
 	private int widthDwi = 500;
 	private int heightDwi = 500;
-	private File dwi, bvecs, bvals = null;
-	private String dwiPath, bvecsPath, bvalsPath, fileTck;
-	private Integer numberOfTracks;
+	private File dwi, tck = null;
+	private String dwiPath, tckPath;
+	private Integer downsampleSize, threshold;
 	private SettingsPanel settingsPanel;
 	private int valueBar = 0;
 	private boolean stop = false;
 
-	public DwiToTckPanel(JFrame f, DrawingArea drawingAream, int width, int height, SettingsPanel settingsPanel) {
+	public QuickBundlesPanel(JFrame f, DrawingArea drawingAream, int width, int height, SettingsPanel settingsPanel) {
 
 		dialog = new JDialog(f, ModalityType.APPLICATION_MODAL);
 
-		JLabel lblTitle = new JLabel("DwiToTck", SwingConstants.CENTER);
+		JLabel lblTitle = new JLabel("QuickBundles Clustering", SwingConstants.CENTER);
 		lblTitle.setForeground(new Color(220, 20, 60));
 		lblTitle.setFont(new Font("Kokonor", Font.PLAIN, 30));
-		lblTitle.setBounds(160, 10, 472, 80);
+		//lblTitle.setBounds(160, 10, 472, 80);
 
 		dialog.getContentPane().add(lblTitle);
 
 		LabelTextButtonPanel dwiPanel = new LabelTextButtonPanel("Load dwi", "Load dwi");
-		LabelTextButtonPanel bvecsPanel = new LabelTextButtonPanel("Load bvecs", "Load bvecs");
-		LabelTextButtonPanel bvalsPanel = new LabelTextButtonPanel("Load bvals", "Load bvals");
-		LabelTextFieldPanel tckOutPanel = new LabelTextFieldPanel("Tck file name", 150);
-		LabelTextFieldPanel numberOfTracksPanel = new LabelTextFieldPanel("Number of tracks", 40);
+		LabelTextButtonPanel tckPanel = new LabelTextButtonPanel("Load tck", "Load tck");
+
+		LabelTextFieldPanel thresholdPanel = new LabelTextFieldPanel("Threshold", 40);
+		LabelTextFieldPanel downsampleSizePanel = new LabelTextFieldPanel("Downsample size", 40);
 
 		dwiPanel.getJbutton().addActionListener(new ActionListener() {
 
@@ -90,46 +78,28 @@ public class DwiToTckPanel {
 			}
 		});
 
-		bvecsPanel.getJbutton().addActionListener(new ActionListener() {
+		tckPanel.getJbutton().addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
 				JFileChooser chooser = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("tck", "tck");
+				chooser.setFileFilter(filter);
 
-				chooser.setFileFilter(null);
-
-				int returnVal = chooser.showDialog(chooser, "Select bvecs file");
+				int returnVal = chooser.showDialog(chooser, "Select tck file");
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-					bvecs = chooser.getSelectedFile();
-					bvecsPath = bvecs.getPath();
-					bvecsPanel.getTextField().setText(bvecsPath);
+					tck= chooser.getSelectedFile();
+					tckPath = tck.getPath();
+					tckPanel.getTextField().setText(tckPath);
 
 				}
 			}
 		});
 
-		bvalsPanel.getJbutton().addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				JFileChooser chooser = new JFileChooser();
-
-				int returnVal = chooser.showDialog(chooser, "Select bvals");
-
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-					bvals = chooser.getSelectedFile();
-					bvalsPath = bvals.getPath();
-					bvalsPanel.getTextField().setText(bvalsPath);
-
-				}
-
-			}
-		});
+		
 
 		JButton submit = new JButton("Submit");
 
@@ -138,25 +108,31 @@ public class DwiToTckPanel {
 		submit.setFocusPainted(false);
 		submit.setContentAreaFilled(false);
 		submit.setSize(new Dimension(100, 80));
-
+		
 		submit.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				fileTck = tckOutPanel.getTextField().getText();
-				numberOfTracks = Integer.parseInt(numberOfTracksPanel.getTextField().getText());
-
-				String[] s = new String[] { "./script.sh", dwiPath, bvecsPath, bvalsPath,
-						Integer.toString(numberOfTracks), fileTck };
-
+				
+				int threshold = Integer.parseInt(thresholdPanel.getTextField().getText());
+				int downsample = Integer.parseInt(downsampleSizePanel.getTextField().getText());
+				
+				String tckFolder = tck.getParentFile().getAbsolutePath();
+				System.out.println("tckFolder: "+tckFolder);
+				String trk=tckPath.substring(0,tckPath.length()-2)+"rk";
+				String[] s = new String[] { "./step1.sh", dwiPath, tckFolder};
+				String[] s2 = new String[] { "python","step2.py",trk, tckFolder,threshold+"",downsample+"",dwiPath};
 				dialog.dispose();
 
 				try {
-					ProcessBuilder pb = new ProcessBuilder(s); //
+					ProcessBuilder pb = new ProcessBuilder(s); 
 					pb.directory(new File(System.getProperty("user.dir")));
-					System.out.println(pb.directory());
-
+					ProcessBuilder pb2 = new ProcessBuilder(s2); 
+					pb2.directory(new File(System.getProperty("user.dir")));
+					pb2.redirectErrorStream(true);
+				
+					
 					valueBar = 0;
 					JDialog caricamento = new JDialog(f, ModalityType.APPLICATION_MODAL);
 					caricamento.setPreferredSize(new Dimension(400, 40));
@@ -185,13 +161,36 @@ public class DwiToTckPanel {
 					pbar.setVisible(true);
 
 					caricamento.pack();
-
+					
 					Process p = pb.start();
 
-					BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+					//BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
-					BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+					//BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+					String string = null;
 
+					// read the output from the command
+					//System.out.println("Here is the standard output of the command:\n");
+
+					
+				//	while ((string = stdError.readLine()) != null) {
+					//	System.out.println(string);
+					//}
+					
+					Process p1 = pb2.start();
+					
+					
+					//BufferedReader stdErrorStep2 = new BufferedReader(new InputStreamReader(p1.getErrorStream()));
+					
+										
+					BufferedReader stdInputStep2 = new BufferedReader(new InputStreamReader(p1.getInputStream()));
+					
+					
+					
+					
+					
+					
+					
 					new Thread(new Runnable() {
 
 						@Override
@@ -202,69 +201,40 @@ public class DwiToTckPanel {
 
 							// read the output from the command
 							System.out.println("Here is the standard output of the command:\n");
-
+							int steps=-1;
 							try {
-								while ((string = stdInput.readLine()) != null) {
-									if (string.equals("step1")) {
-										SwingUtilities.invokeLater(new Runnable() {
-											public void run() {
-												pbar.setValue(15);
-												pbar.updateUI();
-											}
-										});
-
+								while ((string = stdInputStep2.readLine()) != null) {
+									System.out.println(string);
+									if(string.matches("\\d+")) {
+										if(steps==-1) {
+											steps=Integer.parseInt(string);
+										}
+										else {
+											String current = string;
+											int stepsFinal = steps;
+											SwingUtilities.invokeLater(new Runnable() {
+												
+												public void run() {
+													pbar.setValue((Integer.parseInt(current)+1)*100/stepsFinal);
+													pbar.updateUI();
+													if(pbar.getValue()==100) {
+														caricamento.setVisible(false);
+													}
+												}
+											});
+										}
 									}
-
-									if (string.equals("step2")) {
-										SwingUtilities.invokeLater(new Runnable() {
-											public void run() {
-												pbar.setValue(50);
-												pbar.updateUI();
-											}
-										});
-
-									}
-									if (string.equals("step3")) {
-										SwingUtilities.invokeLater(new Runnable() {
-											public void run() {
-												pbar.setValue(60);
-												pbar.updateUI();
-											}
-										});
-
-									}
-
-									if (string.equals("step4")) {
-										SwingUtilities.invokeLater(new Runnable() {
-											public void run() {
-												pbar.setValue(100);
-												pbar.updateUI();
-												caricamento.setVisible(false);
-											}
-										});
-
-									}
-
 								}
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
 
-							// read any errors from the attempted command
-							System.out.println("Here is the standard error of the command (if any):\n");
-							try {
-								while ((string = stdError.readLine()) != null) {
-									System.out.println(string);
-								}
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+						
 
 						}
 					}).start();
-
+					/*
 					new Thread(new Runnable() {
 
 						@Override
@@ -288,31 +258,28 @@ public class DwiToTckPanel {
 							}
 						}
 					}).start();
+					*/
 
 					caricamento.setVisible(true);
 
 				} catch (IOException e1) { // TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
-			JOptionPane.showMessageDialog(f,"Tck File generated successfully");
 
-				settingsPanel.setFibers(TracksReader.read("output_tck/" + fileTck + ".tck"));
 
 			}
 
 		});
-
+		
 		dialog.getContentPane().setLayout(new GridLayout(6, 1));
 
 		GroupLayout layout = new GroupLayout(dialog.getContentPane());
 		dialog.getContentPane().setLayout(layout);
-		layout.setVerticalGroup(layout.createSequentialGroup().addComponent(lblTitle).addComponent(dwiPanel)
-				.addComponent(bvecsPanel).addComponent(bvalsPanel).addComponent(tckOutPanel)
-				.addComponent(numberOfTracksPanel).addComponent(submit));
-		layout.setHorizontalGroup(layout.createParallelGroup(Alignment.CENTER).addComponent(lblTitle)
-				.addComponent(dwiPanel).addComponent(bvecsPanel).addComponent(bvalsPanel).addComponent(tckOutPanel)
-				.addComponent(numberOfTracksPanel).addComponent(submit));
+		layout.setVerticalGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup().addGap(100).addComponent(lblTitle)).addComponent(dwiPanel)
+				.addComponent(tckPanel).addComponent(downsampleSizePanel).addComponent(thresholdPanel).addComponent(submit));
+		layout.setHorizontalGroup(layout.createParallelGroup(Alignment.CENTER).addGroup(layout.createSequentialGroup().addGap(60).addComponent(lblTitle))
+				.addComponent(dwiPanel).addComponent(tckPanel).addComponent(downsampleSizePanel)
+				.addComponent(thresholdPanel).addComponent(submit));
 
 		layout.setAutoCreateContainerGaps(true);
 		layout.setAutoCreateGaps(true);
@@ -326,6 +293,8 @@ public class DwiToTckPanel {
 		dialog.pack();
 		dialog.setVisible(true);
 
-	}
+	
 
-}
+		}
+		
+	}
