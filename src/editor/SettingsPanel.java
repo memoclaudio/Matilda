@@ -86,7 +86,7 @@ public class SettingsPanel extends JPanel {
 		Image saveModelIcon = null;
 		Image uploadModelIcon = null;
 		Image uploadDwi = null;
-		Image partitionIcon=null;
+		Image partitionIcon = null;
 		try {
 			resetIcon = ImageIO.read(new File("src/images/eraser2.png"));
 			nPointsIcon = ImageIO.read(new File("src/images/ellipsis-h.png"));
@@ -101,7 +101,7 @@ public class SettingsPanel extends JPanel {
 			saveModelIcon = ImageIO.read(new File("src/images/save.png"));
 			uploadModelIcon = ImageIO.read(new File("src/images/upload.png"));
 			uploadDwi = ImageIO.read(new File("src/images/uploadDwi.png"));
-			partitionIcon=ImageIO.read(new File("src/images/partition.png"));
+			partitionIcon = ImageIO.read(new File("src/images/partition.png"));
 
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(null, "Error loading image");
@@ -236,42 +236,36 @@ public class SettingsPanel extends JPanel {
 		dwi.setContentAreaFilled(false);
 		dwi.setLocation((int) ((0.1 * width) / 4) + 40, (int) (height / 7) * 3 - 70);
 		dwi.setSize(new Dimension(30, 30));
-		SettingsPanel settingsPanel=this;
+		SettingsPanel settingsPanel = this;
 		dwi.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				new DwiToTckPanel(f, drawingArea, width, height,settingsPanel);
-	
-		}});
+				new DwiToTckPanel(f, drawingArea, width, height, settingsPanel);
+
+			}
+		});
 		add(dwi);
-		
-		
-		
-		// reset
-				 newimg = partitionIcon.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
-				// scaled icon
-				 newIcon = new ImageIcon(newimg);
-				JButton partitionButton = new JButton();
-				partitionButton.setIcon(newIcon);
-				partitionButton.setLocation((int) ((0.1 * width) / 4) * 3 + 40, (int) (height / 7) * 3 + 10);
-				partitionButton.setSize(new Dimension(30, 30));
-				partitionButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-				partitionButton.setBorder(null);
-				partitionButton.setContentAreaFilled(false);
-				partitionButton.addActionListener(new ActionListener() {
 
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						new QuickBundlesPanel(f, drawingArea, width, height,settingsPanel);
-						
+		newimg = partitionIcon.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+		newIcon = new ImageIcon(newimg);
+		JButton partitionButton = new JButton();
+		partitionButton.setIcon(newIcon);
+		partitionButton.setLocation((int) ((0.1 * width) / 4) * 3 + 40, (int) (height / 7) * 3 + 10);
+		partitionButton.setSize(new Dimension(30, 30));
+		partitionButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		partitionButton.setBorder(null);
+		partitionButton.setContentAreaFilled(false);
+		partitionButton.addActionListener(new ActionListener() {
 
-					}
-				});
-				add(partitionButton);
-		
-		
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new QuickBundlesPanel(f, drawingArea, width, height, settingsPanel);
+
+			}
+		});
+		add(partitionButton);
 
 		// Start button
 		newimg = startIcon.getScaledInstance(80, 80, java.awt.Image.SCALE_SMOOTH);
@@ -288,9 +282,7 @@ public class SettingsPanel extends JPanel {
 		start.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
 
-				
 				if (!drawingArea.emptyModel()) {
 					if (fibers != null) {
 						stop = false;
@@ -327,8 +319,6 @@ public class SettingsPanel extends JPanel {
 							public void run() {
 								while (!stop) {
 
-									
-									
 									String model = Converter.convertMatrixToString(drawingArea.getModelVertex(),
 											drawingArea.getNumColors());
 									ArrayList<Fiber> fibersResult = null;
@@ -399,10 +389,9 @@ public class SettingsPanel extends JPanel {
 									caricamento.setVisible(false);
 									if (!stop) {
 										if (fibersResult.size() != 0) {
-											
-										
+
 											outputPanel = new OutputPanel(fibersResult);
-											
+
 											outputPanel.start();
 										} else
 											JOptionPane.showMessageDialog(null, "No result");
@@ -745,7 +734,7 @@ public class SettingsPanel extends JPanel {
 		saveModelButton.setToolTipText("Save model");
 		uploadModelButton.setToolTipText("Upload a model");
 		dwi.setToolTipText("Upload Dwi");
-
+		partitionButton.setToolTipText("Quick-bundles partitioning");
 	}
 
 	private static boolean isWindows() {

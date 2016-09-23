@@ -147,7 +147,7 @@ private ArrayList<Fiber>fibre;
 					JFileChooser chooser = new JFileChooser();
 					FileNameExtensionFilter filter = new FileNameExtensionFilter("tck", "tck");
 					chooser.setFileFilter(filter);
-					chooser.setCurrentDirectory(new File("./"));
+					//chooser.setCurrentDirectory(new File("/home/manu/"));
 					int actionDialog = chooser.showSaveDialog(frame);
 					if (actionDialog == JFileChooser.APPROVE_OPTION) {
 						File fileName = new File(chooser.getSelectedFile() + ".tck");

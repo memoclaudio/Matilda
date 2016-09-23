@@ -1,14 +1,10 @@
 package editor;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Image;
-
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,11 +14,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-import javax.imageio.ImageIO;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -30,14 +25,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import jdk.nashorn.internal.runtime.regexp.joni.ast.CClassNode.CCStateArg;
 
 public class DwiToTckPanel {
 
@@ -47,7 +37,6 @@ public class DwiToTckPanel {
 	private File dwi, bvecs, bvals = null;
 	private String dwiPath, bvecsPath, bvalsPath, fileTck;
 	private Integer numberOfTracks;
-	private SettingsPanel settingsPanel;
 	private int valueBar = 0;
 	private boolean stop = false;
 
@@ -156,6 +145,7 @@ public class DwiToTckPanel {
 					ProcessBuilder pb = new ProcessBuilder(s); //
 					pb.directory(new File(System.getProperty("user.dir")));
 					System.out.println(pb.directory());
+					pb.redirectErrorStream(true);
 
 					valueBar = 0;
 					JDialog caricamento = new JDialog(f, ModalityType.APPLICATION_MODAL);
@@ -171,11 +161,13 @@ public class DwiToTckPanel {
 					pbar.setForeground(new Color(220, 20, 60));
 					pbar.setBackground(new Color(32, 32, 32));
 					pbar.setBorderPainted(false);
+					Process p = pb.start();
 
 					caricamento.getContentPane().add(pbar);
 					caricamento.addWindowListener(new WindowAdapter() {
 						public void windowClosing(WindowEvent e) {
 							stop = true;
+							p.destroy();
 
 						}
 					});
@@ -185,8 +177,6 @@ public class DwiToTckPanel {
 					pbar.setVisible(true);
 
 					caricamento.pack();
-
-					Process p = pb.start();
 
 					BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
@@ -199,12 +189,26 @@ public class DwiToTckPanel {
 							// TODO Auto-generated method stub
 
 							String string = null;
-
+							Pattern p = Pattern.compile("(\\d+)%.*s");
 							// read the output from the command
 							System.out.println("Here is the standard output of the command:\n");
 
 							try {
 								while ((string = stdInput.readLine()) != null) {
+
+									if (pbar.getValue() >= 60) {
+										Matcher m = p.matcher(string);
+										if (m.find()) {
+											SwingUtilities.invokeLater(new Runnable() {
+												public void run() {
+													int i = Integer.parseInt(m.group(1));
+													pbar.setValue(i * 40 / 100 + 60);
+													pbar.updateUI();
+												}
+											});
+										}
+									}
+									System.out.println(string);
 									if (string.equals("step1")) {
 										SwingUtilities.invokeLater(new Runnable() {
 											public void run() {
@@ -246,9 +250,9 @@ public class DwiToTckPanel {
 									}
 
 								}
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
+							} catch (IOException e) {
+								if(!stop)
+									e.printStackTrace();
 							}
 
 							// read any errors from the attempted command
@@ -259,7 +263,8 @@ public class DwiToTckPanel {
 								}
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
-								e.printStackTrace();
+								if(!stop)
+									e.printStackTrace();
 							}
 
 						}
@@ -269,13 +274,10 @@ public class DwiToTckPanel {
 
 						@Override
 						public void run() {
-							while (pbar.getValue() <60) {
-								try {
-									Thread.sleep(10000);
-								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
+							while (pbar.getValue() < 60) {
+								if (stop)
+									return;
+
 								SwingUtilities.invokeLater(new Runnable() {
 									public void run() {
 
@@ -284,6 +286,12 @@ public class DwiToTckPanel {
 										pbar.updateUI();
 									}
 								});
+								try {
+									Thread.sleep(10000);
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 
 							}
 						}
@@ -294,11 +302,18 @@ public class DwiToTckPanel {
 				} catch (IOException e1) { // TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+
 				
-			JOptionPane.showMessageDialog(f,"Tck File generated successfully");
-
-				settingsPanel.setFibers(TracksReader.read("output_tck/" + fileTck + ".tck"));
-
+				if (!stop) {
+					JOptionPane.showMessageDialog(f, "Tck File generated successfully");
+					settingsPanel.setFibers(TracksReader.read("output_tck/" + fileTck + ".tck"));
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(f, "Process stopped");
+				}
+			
+					
 			}
 
 		});
@@ -325,7 +340,6 @@ public class DwiToTckPanel {
 
 		dialog.pack();
 		dialog.setVisible(true);
-
 	}
 
 }

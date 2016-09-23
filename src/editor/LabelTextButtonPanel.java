@@ -1,10 +1,8 @@
 package editor;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
 import java.io.File;
@@ -65,10 +63,7 @@ public class LabelTextButtonPanel extends JPanel {
 		
 		
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(label).addGroup(groupLayout.createParallelGroup().addComponent(textField,25,25,25).addComponent(jbutton)));
-		
-		//groupLayout.setAutoCreateGaps(true);
-		//groupLayout.setAutoCreateContainerGaps(true);
-		
+				
 		this.setLayout(groupLayout);
 		setBackground(new Color(32, 32, 32));
 		setSize(100,100);
